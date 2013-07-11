@@ -11,11 +11,6 @@ import java.util.Set;
  */
 public class Result extends Response implements Map<String, String> {
 
-    public Result() {
-        super(null);
-        this.map = new HashMap<String, String>();
-    }
-    
     public String get(String key) {
         return map.get(key);
     }
@@ -72,7 +67,12 @@ public class Result extends Response implements Map<String, String> {
     public Set<Entry<String, String>> entrySet() {
         return map.entrySet();
     }
-    
+
+    Result() {
+        super(null);
+        this.map = new HashMap<String, String>();
+    }
+   
     private final Map<String, String> map;
 
 }

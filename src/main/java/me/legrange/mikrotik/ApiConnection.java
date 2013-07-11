@@ -24,6 +24,9 @@ public class ApiConnection {
 
     /**
      * Create a new API connection to the give device on the supplied port
+     * @param host The host to which to connect.
+     * @param port The TCP port to use.
+     * @return The ApiConnection 
      */
     public static ApiConnection connect(String host, int port) throws ApiConnectionException {
         ApiConnection con = new ApiConnection();
@@ -32,16 +35,18 @@ public class ApiConnection {
     }
 
     /**
-     * Create a new API connection to the give device on the default API port
+     * Create a new API connection to the give device on the default API port.. 
+     * @param host The host to which to connect.
+     * @return The ApiConnection 
      */
-    public static ApiConnection connect(String host) throws ApiConnectionException {
+   public static ApiConnection connect(String host) throws ApiConnectionException {
         return connect(host, DEFAULT_PORT);
     }
 
     /**
-     * State of connection
+     * Check the state of connection.
      *
-     * @return - if connection is established to router it returns true.
+     * @return if connection is established to router it returns true.
      */
     public boolean isConnected() {
         return connected;
@@ -63,27 +68,45 @@ public class ApiConnection {
         }
     }
 
+    /**
+     * Log in to the remote router. 
+     *
+     * @param username - username of the user on the router
+     * @param password - password for the user
+     */
+    public void login(String username, String password) throws MikrotikApiException, ApiCommandException, InterruptedException {
+        List<Result> list = execute("/login");
+        Result res = list.get(0);
+        String hash = res.get("ret");
+        String chal = Util.hexStrToStr("00") + new String(makePass(password)) + Util.hexStrToStr(hash);
+        chal = Util.hashMD5(chal);
+        execute("/login name=" + username + " response=00" + chal);
+    }
+
+    /** execute a command and return a list of results. 
+     * @param cmd Command to execute
+     * @return The list of results
+     */
+    public List<Result> execute(String cmd) throws MikrotikApiException {
+        return execute(Parser.parse(cmd));
+    }
+
+    /** execute a command and attach a result listener to receive it's results. 
+     * 
+     * @param cmd Command to execute
+     * @param lis ResultListener that will receive the results
+     * @return A command object that can be used to cancel the command.
+     * @throws MikrotikApiException 
+     */
+    public Command execute(String cmd, ResultListener lis) throws MikrotikApiException {
+        return execute(Parser.parse(cmd), lis);
+    }
+
     /** cancel a command */
     public void cancel(Command can) throws MikrotikApiException {
         Command cmd = new Command("/cancel");
         cmd.addParameter("tag", can.getTag());
         execute(cmd);
-    }
-
-    /**
-     * set up method that will log you in
-     *
-     * @param name - username of the user on the router
-     * @param password - password for the user
-     * @return
-     */
-    public void login(String name, String pwd) throws MikrotikApiException, ApiCommandException, InterruptedException {
-        List<Result> list = execute("/login");
-        Result res = list.get(0);
-        String hash = res.get("ret");
-        String chal = Util.hexStrToStr("00") + new String(makePass(pwd)) + Util.hexStrToStr(hash);
-        chal = Util.hashMD5(chal);
-        execute("/login name=" + name + " response=00" + chal);
     }
 
     private List<Result> execute(Command cmd) throws MikrotikApiException {
@@ -92,13 +115,6 @@ public class ApiConnection {
         return l.getResults();
     }
 
-    public List<Result> execute(String cmd) throws MikrotikApiException {
-        return execute(Parser.parse(cmd));
-    }
-
-    public Command execute(String cmd, ResultListener lis) throws MikrotikApiException {
-        return execute(Parser.parse(cmd), lis);
-    }
 
     private Command execute(Command cmd, ResultListener lis) throws MikrotikApiException {
         String tag = nextTag();
@@ -424,6 +440,7 @@ public class ApiConnection {
             }
             return results;
         }
+        
         private List<Result> results = new LinkedList<Result>();
         private Error err;
     }
