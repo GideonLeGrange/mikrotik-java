@@ -44,9 +44,9 @@ The same query, but we only want certain result fields names Print all interface
 List<Result> rs = con.execute("/interface/print where type=vlan return name");
 ```
 
-We run asynchrynous commands:
+We can run asynchrynous commands:
 
-This examples shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
+This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
 
 ```java
 Command cmd = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to-noise", 
@@ -60,7 +60,7 @@ Command cmd = con.execute("/interface/wireless/monitor .id=wlan1 return signal-t
   );
 ```
 
-This command will run and send results asynchrynously as they become available, until it is canceled. The command (returned in the Command 
+The above command will run and send results asynchrynously as they become available, until it is canceled. The command (returned in the Command 
 object above) is cancelled like this:
 
 ```java
