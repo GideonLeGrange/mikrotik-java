@@ -6,7 +6,7 @@ A Java client implementation for the Mikrotik RouterOS API.
 This project provides a Java client to manipulate Mikrotik routers using the remote API. Simple things must be easy to do, and complex things must be possible.
 
 *This code is currently pre-release, so in order to use it you will have to clone it locally and compile it yourself. Any part,
-including public interfaces, can change at any time until, I release version 1.0.*
+including public interfaces, can change at any time, until I release version 1.0.*
 
 Examples
 ========
