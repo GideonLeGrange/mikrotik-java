@@ -15,7 +15,6 @@ import java.util.List;
 class Util {
     
     static void write(Command cmd, OutputStream out) throws UnsupportedEncodingException, IOException {
-        System.out.println("cmd = '" + cmd + "'");
         encode(cmd.getCommand(), out);
         for (Parameter param : cmd.getParameters()) {
             encode(String.format("=%s=%s", param.getName(), param.hasValue() ? param.getValue() : "" ), out);
