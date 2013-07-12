@@ -429,8 +429,10 @@ public class ApiConnection {
 
         private List<Result> getResults() throws ApiCommandException, ApiConnectionException {
             try {
-                synchronized (this) {
-                    wait();
+                synchronized (this) { // don't wait if we already have a result. 
+                    if ((err == null) && results.isEmpty()) {
+                        wait();
+                    }
                 }
             } catch (InterruptedException ex) {
                 throw new ApiConnectionException(ex.getMessage(), ex);
