@@ -67,6 +67,18 @@ con.cancel(cmd);
 
 More examples will be added shortly. 
 
+TODO
+====
+For 1.0: 
+[ ] More examples
+[ ] More formal documentation
+[ ] Push Javadoc to GitHub
+[ ] Slight changes to the API still coming
+[ ] Look into possible race condition when running short lived commands synchronously. 
+
+Later:
+[ ] SSL support.
+
 References
 ==========
 
