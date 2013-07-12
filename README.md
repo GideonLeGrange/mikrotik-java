@@ -24,21 +24,19 @@ A simple example that returns a result: Print all interfaces.
 
 
 ```java
-ApiConnection con = ApiConnection.connect("10.0.1.1");
-con.login("admin","password");
 List<Result> rs = con.execute("/interface/print");
 for (Result r : rs) {
   System.out.println(r);
 }
 ```
 
-The same query, but with the results filtered: Print all interfaces of type 'vlan'
+The same query, but with the results filtered: Print all interfaces of type 'vlan'.
 
 ```java
 List<Result> rs = con.execute("/interface/print where type=vlan");
 ```
 
-The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name
+The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name.
 
 ```java
 List<Result> rs = con.execute("/interface/print where type=vlan return name");
