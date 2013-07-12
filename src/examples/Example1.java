@@ -3,7 +3,7 @@ package examples;
 import me.legrange.mikrotik.MikrotikApiException;
 
 /**
- * Example 1: A very simple command: Reboot the remote router
+ * Example 1: A very simple example: Reboot the remote router
  * @author gideon
  */
 public class Example1 extends Example {

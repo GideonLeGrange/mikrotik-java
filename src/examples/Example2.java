@@ -5,7 +5,7 @@ import me.legrange.mikrotik.MikrotikApiException;
 import me.legrange.mikrotik.Result;
 
 /**
- * Example 2: A command that returns results. Print all interfaces
+ * Example 2: Print all interfaces
  *
  * @author gideon
  */
