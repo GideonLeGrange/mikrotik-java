@@ -7,11 +7,11 @@ package me.legrange.mikrotik;
  */
 public interface ResponseListener extends ResultListener {
     
-    /** called if the command associated with this listener experiences a trap */
-    void error(Error err);
+    /** called if the command associated with this listener experiences an error */
+    void error(MikrotikApiException ex);
     
     /** called when the command associated with this listener is done */
-    void completed(Done done);
+    void completed();
    
     
 }

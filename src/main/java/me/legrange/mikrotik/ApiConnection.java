@@ -98,15 +98,13 @@ public class ApiConnection {
      * @return A command object that can be used to cancel the command.
      * @throws MikrotikApiException 
      */
-    public Command execute(String cmd, ResultListener lis) throws MikrotikApiException {
+    public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
         return execute(Parser.parse(cmd), lis);
     }
 
     /** cancel a command */
-    public void cancel(Command can) throws MikrotikApiException {
-        Command cmd = new Command("/cancel");
-        cmd.addParameter("tag", can.getTag());
-        execute(cmd);
+    public void cancel(String tag) throws MikrotikApiException {
+        execute(String.format("/cancel tag=%s", tag)); 
     }
 
     private List<Result> execute(Command cmd) throws MikrotikApiException {
@@ -116,7 +114,7 @@ public class ApiConnection {
     }
 
 
-    private Command execute(Command cmd, ResultListener lis) throws MikrotikApiException {
+    private String execute(Command cmd, ResultListener lis) throws MikrotikApiException {
         String tag = nextTag();
         cmd.setTag(tag);
         listeners.put(tag, lis);
@@ -127,7 +125,7 @@ public class ApiConnection {
         } catch (IOException ex) {
             throw new ApiConnectionException(ex.getMessage(), ex);
         }
-        return cmd;
+        return tag;
     }
 
     private ApiConnection() {
@@ -265,9 +263,14 @@ public class ApiConnection {
                         if (l instanceof ResponseListener) {
                             ResponseListener rl = (ResponseListener) l;
                             if (res instanceof Done) {
-                                rl.completed((Done) res);
+                                if (rl instanceof SyncListener) {
+                                    ((SyncListener)rl).completed((Done)res);
+                                }
+                                else {
+                                    rl.completed();
+                                }
                             } else if (res instanceof Error) {
-                                rl.error((Error) res);
+                                rl.error(new ApiCommandException((Error) res));
                             }
                         }
                     }
@@ -409,17 +412,21 @@ public class ApiConnection {
 
     private class SyncListener implements ResponseListener {
 
-        public synchronized void error(Error err) {
-            this.err = err;
+        public synchronized void error(MikrotikApiException ex) {
+            this.err = ex;
             notify();
         }
-
-        public synchronized void completed(Done done) {
+        
+        public void completed() { 
+            notify();
+        }
+        
+        synchronized void completed(Done done) {
             if (done.getHash() != null) {
                 Result res = new Result();
                 res.put("ret", done.getHash());
                 results.add(res);
-            }
+            }    
             notify();
         }
 
@@ -427,7 +434,7 @@ public class ApiConnection {
             results.add(result);
         }
 
-        private List<Result> getResults() throws ApiCommandException, ApiConnectionException {
+        private List<Result> getResults() throws MikrotikApiException {
             try {
                 synchronized (this) { // don't wait if we already have a result. 
                     if ((err == null) && results.isEmpty()) {
@@ -438,12 +445,12 @@ public class ApiConnection {
                 throw new ApiConnectionException(ex.getMessage(), ex);
             }
             if (err != null) {
-                throw new ApiCommandException(err);
+                throw err;
             }
             return results;
         }
         
         private List<Result> results = new LinkedList<Result>();
-        private Error err;
+        private MikrotikApiException err;
     }
 }

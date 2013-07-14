@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author GideonLeGrange
  */
-public class Command {
+class Command {
 
     @Override
     public String toString() {
