@@ -47,7 +47,7 @@ We can run asynchrynous commands:
 This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
 
 ```java
-Command cmd = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to-noise", 
+String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to-noise", 
       new ResultListener() {
 
             public void receive(Result result) {
@@ -58,11 +58,11 @@ Command cmd = con.execute("/interface/wireless/monitor .id=wlan1 return signal-t
   );
 ```
 
-The above command will run and send results asynchrynously as they become available, until it is canceled. The command (returned in the Command 
-object above) is cancelled like this:
+The above command will run and send results asynchrynously as they become available, until it is canceled. The command (identified by the unique String retruned) 
+ is cancelled like this:
 
 ```java
-con.cancel(cmd);
+con.cancel(tag);
 ```
 
 More examples will be added shortly. 
