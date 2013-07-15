@@ -74,7 +74,6 @@ For 1.0:
 - More formal documentation
 - Push Javadoc to GitHub
 - Get into Maven Central
-- Slight changes to the API still coming
 
 Later:
 - SSL support.
