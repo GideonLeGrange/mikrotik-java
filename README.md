@@ -82,7 +82,3 @@ References
 ==========
 
 The RouterOS API is documented here: http://wiki.mikrotik.com/wiki/Manual:API
-
-Licence
-=======
-mikrotik-java is released under the Apache 2.0 license. See http://www.apache.org/licenses/LICENSE-2.0
