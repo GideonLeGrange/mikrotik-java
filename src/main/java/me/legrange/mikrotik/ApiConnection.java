@@ -75,8 +75,8 @@ public class ApiConnection {
      * @param password - password for the user
      */
     public void login(String username, String password) throws MikrotikApiException, ApiCommandException, InterruptedException {
-        List<Result> list = execute("/login");
-        Result res = list.get(0);
+        List<Map<String, String>> list = execute("/login");
+        Map<String, String> res = list.get(0);
         String hash = res.get("ret");
         String chal = Util.hexStrToStr("00") + new String(makePass(password)) + Util.hexStrToStr(hash);
         chal = Util.hashMD5(chal);
@@ -87,7 +87,7 @@ public class ApiConnection {
      * @param cmd Command to execute
      * @return The list of results
      */
-    public List<Result> execute(String cmd) throws MikrotikApiException {
+    public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
         return execute(Parser.parse(cmd));
     }
 
@@ -104,10 +104,10 @@ public class ApiConnection {
 
     /** cancel a command */
     public void cancel(String tag) throws MikrotikApiException {
-        execute(String.format("/cancel tag=%s", tag)); 
+        execute(String.format("/cancel tag=%s", tag))   ; 
     }
 
-    private List<Result> execute(Command cmd) throws MikrotikApiException {
+    private List<Map<String, String>> execute(Command cmd) throws MikrotikApiException {
         SyncListener l = new SyncListener();
         execute(cmd, l);
         return l.getResults();
@@ -417,7 +417,7 @@ public class ApiConnection {
             notify();
         }
         
-        public void completed() { 
+        public synchronized void completed() { 
             notify();
         }
         
@@ -434,7 +434,7 @@ public class ApiConnection {
             results.add(result);
         }
 
-        private List<Result> getResults() throws MikrotikApiException {
+        private List<Map<String, String>> getResults() throws MikrotikApiException {
             try {
                 synchronized (this) { // don't wait if we already have a result. 
                     if ((err == null) && results.isEmpty()) {
@@ -450,7 +450,7 @@ public class ApiConnection {
             return results;
         }
         
-        private List<Result> results = new LinkedList<Result>();
+        private List<Map<String, String>> results = new LinkedList<Map<String, String>>();
         private MikrotikApiException err;
     }
 }

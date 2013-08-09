@@ -1,8 +1,8 @@
 package examples;
 
 import java.util.List;
+import java.util.Map;
 import me.legrange.mikrotik.MikrotikApiException;
-import me.legrange.mikrotik.Result;
 
 /**
  * Example 3: Queries. Print all interfaces of a certain type. 
@@ -19,8 +19,8 @@ public class Example3 extends Example {
     }
 
     private void test() throws MikrotikApiException {
-        List<Result> results =  con.execute("/interface/print where type=ether");
-        for (Result result : results) {
+        List<Map<String, String>> results =  con.execute("/interface/print where type=ether");
+        for (Map<String, String> result : results) {
             System.out.println(result);
         }
     }

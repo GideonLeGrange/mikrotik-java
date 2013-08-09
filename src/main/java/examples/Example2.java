@@ -1,8 +1,8 @@
 package examples;
 
 import java.util.List;
+import java.util.Map;
 import me.legrange.mikrotik.MikrotikApiException;
-import me.legrange.mikrotik.Result;
 
 /**
  * Example 2: A command that returns results. Print all interfaces
@@ -19,8 +19,8 @@ public class Example2 extends Example {
     }
 
     private void test() throws MikrotikApiException {
-        List<Result> results =  con.execute("/interface/print");
-        for (Result result : results) {
+        List<Map<String, String>> results =  con.execute("/interface/print");
+        for (Map<String, String> result : results) {
             System.out.println(result);
         }
     }

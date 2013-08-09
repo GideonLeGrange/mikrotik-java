@@ -9,7 +9,7 @@ import java.util.Set;
  * A result from an API command. 
  * @author GideonLeGrange
  */
-public class Result extends Response implements Map<String, String> {
+class Result extends Response implements Map<String, String> {
 
     public String get(String key) {
         return map.get(key);
