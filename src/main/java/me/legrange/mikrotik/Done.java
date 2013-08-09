@@ -4,7 +4,7 @@ package me.legrange.mikrotik;
  * Internal representation of !done
  * @author GideonLeGrange
  */
-class Done extends Response {
+class Done extends Responsex {
 
     Done(String tag) {
         super(tag);
