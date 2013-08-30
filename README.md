@@ -24,7 +24,7 @@ A simple example that returns a result: Print all interfaces.
 
 
 ```java
-List<Result> rs = con.execute("/interface/print");
+List<Map<String, String>> rs = con.execute("/interface/print");
 for (Result r : rs) {
   System.out.println(r);
 }
@@ -33,13 +33,13 @@ for (Result r : rs) {
 The same query, but with the results filtered: Print all interfaces of type 'vlan'.
 
 ```java
-List<Result> rs = con.execute("/interface/print where type=vlan");
+List<Map<String, String>> rs = con.execute("/interface/print where type=vlan");
 ```
 
 The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name.
 
 ```java
-List<Result> rs = con.execute("/interface/print where type=vlan return name");
+List<Map<String, String>> rs = con.execute("/interface/print where type=vlan return name");
 ```
 
 We can run asynchrynous commands:
@@ -50,7 +50,7 @@ This example shows how to run '/interface wireless monitor' and have the result 
 String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to-noise", 
       new ResultListener() {
 
-            public void receive(Result result) {
+            public void receive(Map<String, String> result) {
                 System.out.println(result);
             }
             
