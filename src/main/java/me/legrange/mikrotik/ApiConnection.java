@@ -430,7 +430,7 @@ public class ApiConnection {
             notify();
         }
 
-        public void receive(Result result) {
+        public void receive(Map<String, String> result) {
             results.add(result);
         }
 
