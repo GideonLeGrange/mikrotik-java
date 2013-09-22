@@ -25,7 +25,7 @@ A simple example that returns a result: Print all interfaces.
 
 ```java
 List<Map<String, String>> rs = con.execute("/interface/print");
-for (Result r : rs) {
+for (Map<String,String> r : rs) {
   System.out.println(r);
 }
 ```
