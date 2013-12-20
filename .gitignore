@@ -34,3 +34,6 @@ dist/
 
 # Project 
 Mtik.java
+
+# Jekyll 
+_site/
