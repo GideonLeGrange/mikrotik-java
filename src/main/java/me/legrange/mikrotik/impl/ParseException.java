@@ -1,4 +1,6 @@
-package me.legrange.mikrotik;
+package me.legrange.mikrotik.impl;
+
+import me.legrange.mikrotik.MikrotikApiException;
 
 /**
  * Exception thrown if the parser encounters an error while parsing a command line.

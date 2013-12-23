@@ -7,11 +7,11 @@ package me.legrange.mikrotik;
  */
 public class MikrotikApiException extends Exception {
 
-    MikrotikApiException(String msg) {
+    public MikrotikApiException(String msg) {
         super(msg);
     }
 
-    MikrotikApiException(String msg, Throwable err) {
+    public MikrotikApiException(String msg, Throwable err) {
         super(msg, err);
     }
 }

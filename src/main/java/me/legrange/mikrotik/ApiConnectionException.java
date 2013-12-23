@@ -6,11 +6,11 @@ package me.legrange.mikrotik;
  */
 public class ApiConnectionException extends MikrotikApiException {
 
-    ApiConnectionException(String msg) {
+    public ApiConnectionException(String msg) {
         super(msg);
     }
 
-    ApiConnectionException(String msg, Throwable err) {
+    public ApiConnectionException(String msg, Throwable err) {
         super(msg, err);
     }
     

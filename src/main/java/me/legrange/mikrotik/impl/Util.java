@@ -1,4 +1,4 @@
-package me.legrange.mikrotik;
+package me.legrange.mikrotik.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,17 +7,23 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import me.legrange.mikrotik.ApiConnectionException;
 
 /**
- * Utility library that handles the low level encoding required by the Mikrotik API. 
+ * Utility library that handles the low level encoding required by the Mikrotik
+ * API.
+ *
  * @author GideonLeGrange. Possibly some code by janisk left.
  */
-class Util {
-    
+final class Util {
+
+    /**
+     * write a command to the output stream
+     */
     static void write(Command cmd, OutputStream out) throws UnsupportedEncodingException, IOException {
         encode(cmd.getCommand(), out);
         for (Parameter param : cmd.getParameters()) {
-            encode(String.format("=%s=%s", param.getName(), param.hasValue() ? param.getValue() : "" ), out);
+            encode(String.format("=%s=%s", param.getName(), param.hasValue() ? param.getValue() : ""), out);
         }
         String tag = cmd.getTag();
         if ((tag != null) && !tag.equals("")) {
@@ -27,57 +33,32 @@ class Util {
         if (!props.isEmpty()) {
             StringBuilder buf = new StringBuilder("=.proplist=");
             for (int i = 0; i < props.size(); ++i) {
-                if (i > 0) 
+                if (i > 0) {
                     buf.append(",");
+                }
                 buf.append(props.get(i));
             }
             encode(buf.toString(), out);
         }
-        for (String query : cmd.getQueries()) { 
+        for (String query : cmd.getQueries()) {
             encode(query, out);
         }
         out.write(0);
     }
-    
-    /** encode text using Mikrotik's encoding scheme and write it to an output stream. */
-    private static void encode(String word, OutputStream out) throws UnsupportedEncodingException, IOException {
-        byte bytes[] = word.getBytes("US-ASCII");
-        int len = bytes.length;
-        if (len < 0x80) {
-            out.write(len);
-        } else if (len < 0x4000) {
-            len = len | 0x8000;
-            out.write(len >> 8);
-            out.write(len);
-        } else if (len < 0x20000) {
-            len = len | 0xC00000;
-            out.write(len >> 16);
-            out.write(len >> 8);
-            out.write(len);
-        } else if (len < 0x10000000) {
-            len = len | 0xE0000000;
-            out.write(len >> 24);
-            out.write(len >> 16);
-            out.write(len >> 8);
-            out.write(len);
-        } else {
-            out.write(0xF0);
-            out.write(len >> 24);
-            out.write(len >> 16);
-            out.write(len >> 8);
-            out.write(len);
-        }
-        out.write(bytes);
-    }
- 
-       /** decode bytes from an input stream of Mikrotik protocol sentences into text */
+
+    /**
+     * decode bytes from an input stream of Mikrotik protocol sentences into
+     * text
+     */
     static String decode(InputStream in) throws ApiDataException, ApiConnectionException {
         StringBuilder res = new StringBuilder();
         decode(in, res);
         return res.toString();
     }
-    
-    /** decode bytes from an input stream into Mikrotik protocol sentences */
+
+    /**
+     * decode bytes from an input stream into Mikrotik protocol sentences
+     */
     private static void decode(InputStream in, StringBuilder result) throws ApiDataException, ApiConnectionException {
         try {
             int len = readLen(in);
@@ -91,42 +72,15 @@ class Util {
                     buf[i] = (byte) (c & 0xFF);
                 }
                 String res = new String(buf);
-                if (result.length() > 0) 
+                if (result.length() > 0) {
                     result.append("\n");
+                }
                 result.append(res);
                 decode(in, result);
-            } 
+            }
         } catch (IOException ex) {
             throw new ApiConnectionException(ex.getMessage(), ex);
         }
-    }
-
-    /** read length bytes from stream and return length of coming word */
-    static private int readLen(InputStream in) throws IOException {
-        int c = in.read();
-        if (c > 0)  {
-            if ((c & 0x80) == 0) {
-            } else if ((c & 0xC0) == 0x80) {
-                c = c & ~0xC0;
-                c = (c << 8) | in.read();
-            } else if ((c & 0xE0) == 0xC0) {
-                c = c & ~0xE0;
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-            } else if ((c & 0xF0) == 0xE0) {
-                c = c & ~0xF0;
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-            } else if ((c & 0xF8) == 0xF0) {
-                c = in.read();
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-                c = (c << 8) | in.read();
-            }
-        }
-        return c;
     }
 
     /**
@@ -172,5 +126,69 @@ class Util {
             ret += (char) Integer.parseInt(s.substring(i, i + 2), 16);
         }
         return ret;
+    }
+
+    /**
+     * encode text using Mikrotik's encoding scheme and write it to an output
+     * stream.
+     */
+    private static void encode(String word, OutputStream out) throws UnsupportedEncodingException, IOException {
+        byte bytes[] = word.getBytes("US-ASCII");
+        int len = bytes.length;
+        if (len < 0x80) {
+            out.write(len);
+        } else if (len < 0x4000) {
+            len = len | 0x8000;
+            out.write(len >> 8);
+            out.write(len);
+        } else if (len < 0x20000) {
+            len = len | 0xC00000;
+            out.write(len >> 16);
+            out.write(len >> 8);
+            out.write(len);
+        } else if (len < 0x10000000) {
+            len = len | 0xE0000000;
+            out.write(len >> 24);
+            out.write(len >> 16);
+            out.write(len >> 8);
+            out.write(len);
+        } else {
+            out.write(0xF0);
+            out.write(len >> 24);
+            out.write(len >> 16);
+            out.write(len >> 8);
+            out.write(len);
+        }
+        out.write(bytes);
+    }
+
+    /**
+     * read length bytes from stream and return length of coming word
+     */
+    private static int readLen(InputStream in) throws IOException {
+        int c = in.read();
+        if (c > 0) {
+            if ((c & 0x80) == 0) {
+            } else if ((c & 0xC0) == 0x80) {
+                c = c & ~0xC0;
+                c = (c << 8) | in.read();
+            } else if ((c & 0xE0) == 0xC0) {
+                c = c & ~0xE0;
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+            } else if ((c & 0xF0) == 0xE0) {
+                c = c & ~0xF0;
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+            } else if ((c & 0xF8) == 0xF0) {
+                c = in.read();
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+                c = (c << 8) | in.read();
+            }
+        }
+        return c;
     }
 }

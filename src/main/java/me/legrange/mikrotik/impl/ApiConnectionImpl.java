@@ -1,5 +1,6 @@
-package me.legrange.mikrotik;
+package me.legrange.mikrotik.impl;
 
+import me.legrange.mikrotik.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,12 +16,12 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * The Mikrotik API connection. This is the class used to connect to a remote
+ * The Mikrotik API connection implementation. This is the class used to connect to a remote
  * Mikrotik and send commands to it.
  *
  * @author GideonLeGrange
  */
-public class ApiConnection {
+public final class ApiConnectionImpl extends ApiConnection {
 
     /**
      * Create a new API connection to the give device on the supplied port
@@ -29,18 +30,9 @@ public class ApiConnection {
      * @return The ApiConnection 
      */
     public static ApiConnection connect(String host, int port) throws ApiConnectionException {
-        ApiConnection con = new ApiConnection();
+        ApiConnectionImpl con = new ApiConnectionImpl();
         con.open(host, port);
         return con;
-    }
-
-    /**
-     * Create a new API connection to the give device on the default API port.. 
-     * @param host The host to which to connect.
-     * @return The ApiConnection 
-     */
-   public static ApiConnection connect(String host) throws ApiConnectionException {
-        return connect(host, DEFAULT_PORT);
     }
 
     /**
@@ -74,7 +66,7 @@ public class ApiConnection {
      * @param username - username of the user on the router
      * @param password - password for the user
      */
-    public void login(String username, String password) throws MikrotikApiException, ApiCommandException, InterruptedException {
+    public void login(String username, String password) throws MikrotikApiException, InterruptedException {
         List<Map<String, String>> list = execute("/login");
         Map<String, String> res = list.get(0);
         String hash = res.get("ret");
@@ -128,7 +120,7 @@ public class ApiConnection {
         return tag;
     }
 
-    private ApiConnection() {
+    private ApiConnectionImpl() {
     }
 
     /**

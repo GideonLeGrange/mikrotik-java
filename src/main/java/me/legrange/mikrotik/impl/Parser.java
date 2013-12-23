@@ -1,4 +1,4 @@
-package me.legrange.mikrotik;
+package me.legrange.mikrotik.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package me.legrange.mikrotik;
+package me.legrange.mikrotik.impl;
 
 /**
  * Used to encapsulate API error information. We need to pass both the message and the tag (if one was used). 
