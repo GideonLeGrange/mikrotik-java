@@ -1,5 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.legrange</groupId>
@@ -7,8 +13,20 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>mikrotik-java</name>
-    <url>http://maven.apache.org</url>
+    <name>Mikrotik API Java Client Library</name>
+    <url>https://github.com/GideonLeGrange/mikrotik-java</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>git@github.com:GideonLeGrange/mikrotik-java.git</url>
+        <connection>scm:git:git@github.com:GideonLeGrange/mikrotik-java.git</connection>
+        <developerConnection>scm:git:git@github.com:GideonLeGrange/mikrotik-java.git</developerConnection>
+    </scm>
     <build>
         <plugins>
             <plugin>
@@ -42,4 +60,48 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+</project>
+
+
+## 
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven</artifactId>
+    <packaging>jar</packaging>
+    <name>Maven core</name>
+    <version>2.0</version>
+    <description>The maven main core project description</description>
+    <url>http://maven.apache.org</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>http://svn.apache.org/viewcvs.cgi/maven</url>
+        <connection>http://svn.apache.org/viewcvs.cgi/maven</connection>
+    </scm>
+    <developers>
+        <developer>
+            <id>...</id>
+            <name>...</name>
+            <email>...</email>
+        </developer>
+    </developers>
+    <dependencies>
+        <dependency>
+            <groupId>...</groupId>
+            <artifactId>...</artifactId>
+            <version>...</version>
+        </dependency>
+        ...
+    </dependencies>
+    <!--
+    AVOID RELEASE REPOSITORY/PLUGINREPOSITORY:
+    <repositories></repositories>
+    <pluginRepositories></pluginRepositories>
+    -->
 </project>
