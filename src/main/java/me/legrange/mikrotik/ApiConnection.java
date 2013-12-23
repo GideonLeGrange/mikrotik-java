@@ -12,8 +12,8 @@ import me.legrange.mikrotik.impl.ApiConnectionImpl;
  */
 public abstract class ApiConnection {
 
+    /** default TCP port used by Mikrotik API */
     public static final int DEFAULT_PORT = 8728;
-
 
     /**
      * Create a new API connection to the give device on the supplied port
