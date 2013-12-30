@@ -1,12 +1,16 @@
 mikrotik-java
 =============
 
-A Java client implementation for the Mikrotik RouterOS API. 
+A Java client library implementation for the Mikrotik RouterOS API. 
 
 This project provides a Java client to manipulate Mikrotik routers using the remote API. Simple things must be easy to do, and complex things must be possible.
 
-*This code is currently pre-release, so in order to use it you will have to clone it locally and compile it yourself. Any part,
-including public interfaces, can change at any time, until I release version 1.0.*
+Version 1.0 has been released.
+
+What's new in version 1.1
+-------------------------
+
+* TLS (SSL) support to encrypt API traffic. 
 
 Examples
 ========
@@ -64,19 +68,6 @@ The above command will run and send results asynchrynously as they become availa
 ```java
 con.cancel(tag);
 ```
-
-More examples will be added shortly. 
-
-TODO
-====
-For 1.0: 
-- More examples
-- More formal documentation
-- Push Javadoc to GitHub
-- Get into Maven Central
-
-Later:
-- SSL support.
 
 References
 ==========
