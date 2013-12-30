@@ -29,15 +29,12 @@ If your router does not use the default API port, the port can be specified when
 
 ```java 
 ApiConnection con = ApiConnection.connect("10.0.1.1", 1337); // connect to router on port 1337
-con.login("admin","password"); // log in to router
-...
 ```
 
 To open an encrypted (TLS) connection is as simple, assuming the default API-SSL port is used:
 
 ```java
-ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router
-...
+ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router using TLS
 ```
 
 Currently only anonymous TLS is supported, not certificates. 
