@@ -26,6 +26,9 @@ con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
 
+Reading data 
+------------
+
 A simple example that returns a result: Print all interfaces.
 
 
@@ -48,7 +51,11 @@ The same query, but we only want certain result fields names Print all interface
 List<Map<String, String>> rs = con.execute("/interface/print where type=vlan return name");
 ```
 
-We can run asynchrynous commands:
+
+Asynchronous commands
+---------------------
+
+We can run asynchronous  commands:
 
 This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
 
@@ -64,8 +71,8 @@ String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to
   );
 ```
 
-The above command will run and send results asynchrynously as they become available, until it is canceled. The command (identified by the unique String retruned) 
- is cancelled like this:
+The above command will run and send results asynchronously as they become available, until it is canceled. The command (identified by the unique String retruned) 
+ is canceled like this:
 
 ```java
 con.cancel(tag);
