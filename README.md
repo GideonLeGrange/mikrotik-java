@@ -26,6 +26,18 @@ con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
 
+To open an encrypted (TLS) connection is as simple, assuming the default API-SSL port is used:
+
+```java
+ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router
+con.login("admin","password"); // log in to router
+con.disconnect(); // disconnect from router
+```
+
+Currently only anonymous TLS is supported, not certificates. 
+
+In following examples the connection, logging and disconnection code will not be repeated. 
+
 Reading data 
 ------------
 
