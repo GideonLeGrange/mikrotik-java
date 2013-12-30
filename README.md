@@ -25,13 +25,17 @@ con.login("admin","password"); // log in to router
 con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
+If your router does not use the default API port, the port can be specified when connecting: 
+
+```java 
+ApiConnection con = ApiConnection.connect("10.0.1.1", 1337); // connect to router on port 1337
+```
 
 To open an encrypted (TLS) connection is as simple, assuming the default API-SSL port is used:
 
 ```java
 ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router
 con.login("admin","password"); // log in to router
-con.disconnect(); // disconnect from router
 ```
 
 Currently only anonymous TLS is supported, not certificates. 
