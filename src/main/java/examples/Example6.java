@@ -1,49 +1,25 @@
 package examples;
 
-import java.util.Map;
 import me.legrange.mikrotik.MikrotikApiException;
-import me.legrange.mikrotik.ResponseListener;
 
 /**
- * Example 5: Asynchronous results, with error and completion. Run a command and receive results, errors and completion notification for it asynchronously with a ResponseListener
+ * Example 6: Create and modify object
  *
  * @author gideon
  */
-public class Example5 extends Example {
+public class Example6 extends Example {
 
     public static void main(String... args) throws Exception {
-        Example5 ex = new Example5();
+        Example6 ex = new Example6();
         ex.connect();
         ex.test();
         ex.disconnect();
     }
 
     private void test() throws MikrotikApiException, InterruptedException {
-        boolean completed = false;
-       String id = con.execute("/interface/wireless/monitor .id=wlan1", new ResponseListener() {
-           private int prev = 0;
-
-           public void receive(Map<String, String> result) {
-               int val = Integer.parseInt(result.get("signal-strength"));
-               String sym = (val == prev) ? " " : ((val < prev) ? "-" : "+");
-               System.out.printf("%d %s\n", val, sym);
-               prev = val;
-           }
-
-           public void error(MikrotikApiException ex) {
-               System.out.printf("An error ocurred: %s\n", ex.getMessage());
-               ex.printStackTrace();
-           }
-
-           public void completed() {
-               System.out.printf("The request has been completed\n");
-           }
-
-
-        });
-       // let it run for 60 seconds 
-       Thread.sleep(10000);
-       con.cancel(id);
-       Thread.sleep(2000);
+        con.execute("/interface/gre/add remote-address=10.0.1.1 name=gre1 keepalive=10");
+        Thread.sleep(10000); // 10 seconds for the user to look on the router to see the interface with /interface gre print
+        con.execute("/interface/gre/set remote-address=172.16.1.1 .id=gre1");
+        // now look again and the IP has changed
     }
 }
