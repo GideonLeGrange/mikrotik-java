@@ -5,12 +5,14 @@ A Java client library implementation for the Mikrotik RouterOS API.
 
 This project provides a Java client to manipulate Mikrotik routers using the remote API. Simple things must be easy to do, and complex things must be possible.
 
-Version 1.0 has been released.
+Versions
+--------
 
-What's new in version 1.1
--------------------------
+The current stable version is 1.0. The master branch is on version 1.1, which is the currently being tested and will be released soon. 
 
+Version 1.1 will add: 
 * TLS (SSL) support to encrypt API traffic. 
+
 
 Examples
 ========
