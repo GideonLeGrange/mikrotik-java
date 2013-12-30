@@ -12,8 +12,26 @@ import me.legrange.mikrotik.impl.ApiConnectionImpl;
  */
 public abstract class ApiConnection {
 
-    /** default TCP port used by Mikrotik API */
-    public static final int DEFAULT_PORT = 8728;
+    /**
+     * Create a new API connection to the give device on the supplied port, using anonymous TLS for encryption.
+     * @param host The host to which to connect.
+     * @param port The TCP port to use.
+     * @return The ApiConnection 
+     */
+    public static ApiConnection connectTLS(String host, int port) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, port, true);
+    }
+    
+    
+    /**
+     * Create a new API connection to the give device on the default API port, using anonymous TLS for encryption. 
+     * @param host The host to which to connect.
+     * @return The ApiConnection 
+     */
+    public static ApiConnection connectTLS(String host) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, DEFAULT_TLS_PORT, true);
+    }
+
 
     /**
      * Create a new API connection to the give device on the supplied port
@@ -22,11 +40,11 @@ public abstract class ApiConnection {
      * @return The ApiConnection 
      */
     public static ApiConnection connect(String host, int port) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, port);
+        return ApiConnectionImpl.connect(host, port, false);
     }
 
     /**
-     * Create a new API connection to the give device on the default API port.. 
+     * Create a new API connection to the give device on the default API port.
      * @param host The host to which to connect.
      * @return The ApiConnection 
      */
@@ -72,4 +90,9 @@ public abstract class ApiConnection {
     /** cancel a command */
     public abstract void cancel(String tag) throws MikrotikApiException;
 
+    /** default TCP port used by Mikrotik API */
+    private static final int DEFAULT_PORT = 8728;
+    /** default TCP TLS port used by Mikrotik API */
+    private static final int DEFAULT_TLS_PORT = 8729;
+        
 }

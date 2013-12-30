@@ -8,16 +8,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+//import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
- * The Mikrotik API connection implementation. This is the class used to connect to a remote
- * Mikrotik and send commands to it.
+ * The Mikrotik API connection implementation. This is the class used to connect
+ * to a remote Mikrotik and send commands to it.
  *
  * @author GideonLeGrange
  */
@@ -25,13 +30,14 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     /**
      * Create a new API connection to the give device on the supplied port
+     *
      * @param host The host to which to connect.
      * @param port The TCP port to use.
-     * @return The ApiConnection 
+     * @return The ApiConnection
      */
-    public static ApiConnection connect(String host, int port) throws ApiConnectionException {
+    public static ApiConnection connect(String host, int port, boolean secure) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
-        con.open(host, port);
+        con.open(host, port, secure);
         return con;
     }
 
@@ -61,7 +67,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     /**
-     * Log in to the remote router. 
+     * Log in to the remote router.
      *
      * @param username - username of the user on the router
      * @param password - password for the user
@@ -75,7 +81,9 @@ public final class ApiConnectionImpl extends ApiConnection {
         execute("/login name=" + username + " response=00" + chal);
     }
 
-    /** execute a command and return a list of results. 
+    /**
+     * execute a command and return a list of results.
+     *
      * @param cmd Command to execute
      * @return The list of results
      */
@@ -83,20 +91,23 @@ public final class ApiConnectionImpl extends ApiConnection {
         return execute(Parser.parse(cmd));
     }
 
-    /** execute a command and attach a result listener to receive it's results. 
-     * 
+    /**
+     * execute a command and attach a result listener to receive it's results.
+     *
      * @param cmd Command to execute
      * @param lis ResultListener that will receive the results
      * @return A command object that can be used to cancel the command.
-     * @throws MikrotikApiException 
+     * @throws MikrotikApiException
      */
     public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
         return execute(Parser.parse(cmd), lis);
     }
 
-    /** cancel a command */
+    /**
+     * cancel a command
+     */
     public void cancel(String tag) throws MikrotikApiException {
-        execute(String.format("/cancel tag=%s", tag))   ; 
+        execute(String.format("/cancel tag=%s", tag));
     }
 
     private List<Map<String, String>> execute(Command cmd) throws MikrotikApiException {
@@ -104,7 +115,6 @@ public final class ApiConnectionImpl extends ApiConnection {
         execute(cmd, l);
         return l.getResults();
     }
-
 
     private String execute(Command cmd, ResultListener lis) throws MikrotikApiException {
         String tag = nextTag();
@@ -124,13 +134,24 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     /**
-     * Start the API. Connects to the Mikrotik
+     * Start the API. Connects to the Mikrotik without using encryption
      */
     private void open(String host, int port) throws ApiConnectionException {
+        open(host, port, false);
+    }
+
+    /**
+     * Start the API. Connects to the Mikrotik
+     */
+    private void open(String host, int port, boolean secure) throws ApiConnectionException {
         try {
             InetAddress ia = InetAddress.getByName(host);
             if (ia.isReachable(1000)) {
-                sock = new Socket(ia, port);
+                if (secure) {
+                    sock = openSSLSocket(ia, port);
+                } else {
+                    sock = new Socket(ia, port);
+                }
                 in = new DataInputStream(sock.getInputStream());
                 out = new DataOutputStream(sock.getOutputStream());
                 connected = true;
@@ -152,6 +173,21 @@ public final class ApiConnectionImpl extends ApiConnection {
         }
     }
 
+    /**
+     * open and configure a SSL socket.
+     */
+    private Socket openSSLSocket(InetAddress ia, int port) throws IOException {
+        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket(ia, port);
+        List<String> cs = new LinkedList<String>();
+        // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
+        // caused by a "SSL peer shut down incorrectly" error
+        for (String s : ssl.getSupportedCipherSuites()) {
+            if (s.startsWith("TLS_DH_anon")) cs.add(s);
+        }
+        ssl.setEnabledCipherSuites(cs.toArray(new String[]{})); 
+        return ssl;
+    }
+
     private char[] makePass(String pass) {
         if (true) {
             return pass.toCharArray();
@@ -166,7 +202,6 @@ public final class ApiConnectionImpl extends ApiConnection {
         _tag++;
         return Integer.toHexString(_tag);
     }
-    
     private static final int DEFAULT_PORT = 8728;
     private Socket sock = null;
     private DataOutputStream out = null;
@@ -256,9 +291,8 @@ public final class ApiConnectionImpl extends ApiConnection {
                             ResponseListener rl = (ResponseListener) l;
                             if (res instanceof Done) {
                                 if (rl instanceof SyncListener) {
-                                    ((SyncListener)rl).completed((Done)res);
-                                }
-                                else {
+                                    ((SyncListener) rl).completed((Done) res);
+                                } else {
                                     rl.completed();
                                 }
                             } else if (res instanceof Error) {
@@ -408,17 +442,17 @@ public final class ApiConnectionImpl extends ApiConnection {
             this.err = ex;
             notify();
         }
-        
-        public synchronized void completed() { 
+
+        public synchronized void completed() {
             notify();
         }
-        
+
         synchronized void completed(Done done) {
             if (done.getHash() != null) {
                 Result res = new Result();
                 res.put("ret", done.getHash());
                 results.add(res);
-            }    
+            }
             notify();
         }
 
@@ -441,7 +475,6 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return results;
         }
-        
         private List<Map<String, String>> results = new LinkedList<Map<String, String>>();
         private MikrotikApiException err;
     }
