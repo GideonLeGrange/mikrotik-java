@@ -54,11 +54,15 @@ for (Map<String,String> r : rs) {
 }
 ```
 
+### Filtering results
+
 The same query, but with the results filtered: Print all interfaces of type 'vlan'.
 
 ```java
 List<Map<String, String>> rs = con.execute("/interface/print where type=vlan");
 ```
+
+### Selecting returned fields
 
 The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name.
 
