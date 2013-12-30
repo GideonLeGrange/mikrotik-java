@@ -51,11 +51,39 @@ The same query, but we only want certain result fields names Print all interface
 List<Map<String, String>> rs = con.execute("/interface/print where type=vlan return name");
 ```
 
+Writing data 
+------------
+
+Creating, modifying and deleting configuration objects is of course possible.
+
+### Creating an object 
+
+This example shows how to create a new GRE interface: 
+
+```java
+con.execute("/interface/gre/add remote-address=192.168.1.1 name=gre1 keepalive=10");
+```
+
+### Modify an existing object
+
+Change the IP address in the object created by the above example:
+
+```java
+con.execute("/interface/gre/set .id=gre1 remote-address=10.0.1.1"); 
+```
+
+### Remove an existing object
+
+And now remove the object:
+
+```java
+con.execute("/interface/gre/remove .id=gre1"); 
+```
 
 Asynchronous commands
 ---------------------
 
-We can run asynchronous  commands:
+We can run some commands asynchronously in order to continue receiving updates:
 
 This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
 
