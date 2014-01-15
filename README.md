@@ -36,7 +36,7 @@ ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router u
 
 Currently only anonymous TLS is supported, not certificates. 
 
-In following examples the connection, logging and disconnection code will not be repeated. 
+In following examples the connection, login and disconnection code will not be repeated. 
 
 Reading data 
 ------------
