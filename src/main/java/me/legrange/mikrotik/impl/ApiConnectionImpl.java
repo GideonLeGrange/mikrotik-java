@@ -146,24 +146,20 @@ public final class ApiConnectionImpl extends ApiConnection {
     private void open(String host, int port, boolean secure) throws ApiConnectionException {
         try {
             InetAddress ia = InetAddress.getByName(host);
-            if (ia.isReachable(1000)) {
-                if (secure) {
-                    sock = openSSLSocket(ia, port);
-                } else {
-                    sock = new Socket(ia, port);
-                }
-                in = new DataInputStream(sock.getInputStream());
-                out = new DataOutputStream(sock.getOutputStream());
-                connected = true;
-                reader = new Reader();
-                reader.setDaemon(true);
-                reader.start();
-                processor = new Processor();
-                processor.setDaemon(true);
-                processor.start();
+            if (secure) {
+                sock = openSSLSocket(ia, port);
             } else {
-                throw new ApiConnectionException(String.format("Host '%s' port %d is uncreachable", host, port));
+                sock = new Socket(ia, port);
             }
+            in = new DataInputStream(sock.getInputStream());
+            out = new DataOutputStream(sock.getOutputStream());
+            connected = true;
+            reader = new Reader();
+            reader.setDaemon(true);
+            reader.start();
+            processor = new Processor();
+            processor.setDaemon(true);
+            processor.start();
         } catch (UnknownHostException ex) {
             connected = false;
             throw new ApiConnectionException(String.format("Unknown host '%s'", host), ex);
@@ -182,9 +178,11 @@ public final class ApiConnectionImpl extends ApiConnection {
         // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
         // caused by a "SSL peer shut down incorrectly" error
         for (String s : ssl.getSupportedCipherSuites()) {
-            if (s.startsWith("TLS_DH_anon")) cs.add(s);
+            if (s.startsWith("TLS_DH_anon")) {
+                cs.add(s);
+            }
         }
-        ssl.setEnabledCipherSuites(cs.toArray(new String[]{})); 
+        ssl.setEnabledCipherSuites(cs.toArray(new String[]{}));
         return ssl;
     }
 
