@@ -8,10 +8,7 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 Versions
 --------
 
-The current stable version is 1.0. The master branch is on version 1.1, which is the currently being tested and will be released soon. 
-
-Version 1.1 will add: 
-* TLS (SSL) support to encrypt API traffic. 
+The current stable version 1.1, which added TLS (SSL) support to encrypt API traffic. 
 
 
 Examples
@@ -39,7 +36,7 @@ ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router u
 
 Currently only anonymous TLS is supported, not certificates. 
 
-In following examples the connection, logging and disconnection code will not be repeated. 
+In following examples the connection, login and disconnection code will not be repeated. 
 
 Reading data 
 ------------
@@ -54,11 +51,15 @@ for (Map<String,String> r : rs) {
 }
 ```
 
+### Filtering results
+
 The same query, but with the results filtered: Print all interfaces of type 'vlan'.
 
 ```java
 List<Map<String, String>> rs = con.execute("/interface/print where type=vlan");
 ```
+
+### Selecting returned fields
 
 The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name.
 
