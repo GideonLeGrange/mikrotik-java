@@ -165,7 +165,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             throw new ApiConnectionException(String.format("Unknown host '%s'", host), ex);
         } catch (IOException ex) {
             connected = false;
-            throw new ApiConnectionException(String.format("Error connecting to '%s': %s", host, ex.getMessage()), ex);
+            throw new ApiConnectionException(String.format("Error connecting to %s:%d : %s", host, port, ex.getMessage()), ex);
         }
     }
 
