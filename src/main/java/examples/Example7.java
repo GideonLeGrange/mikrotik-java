@@ -21,6 +21,7 @@ public class Example7 extends Example {
     private void test() throws MikrotikApiException, InterruptedException {
         con.execute("/export file=conf");
         List<Map<String, String>> res = con.execute("/file/print detail where name=conf.rsc");
+        con.execute("/file/remove conf.rsc");
         String text = res.get(0).get("contents");
         for (String line : text.split("\r")) {
             System.out.println(line);
