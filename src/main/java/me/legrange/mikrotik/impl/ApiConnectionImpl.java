@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.Provider;
-import java.security.Security;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,7 +31,9 @@ public final class ApiConnectionImpl extends ApiConnection {
      *
      * @param host The host to which to connect.
      * @param port The TCP port to use.
+     * @param secure Is TLS required
      * @return The ApiConnection
+     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a problem connecting
      */
     public static ApiConnection connect(String host, int port, boolean secure) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
@@ -46,13 +46,16 @@ public final class ApiConnectionImpl extends ApiConnection {
      *
      * @return if connection is established to router it returns true.
      */
+    @Override
     public boolean isConnected() {
         return connected;
     }
 
     /**
      * Disconnect from the remote API
+     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a problem disconnecting
      */
+    @Override
     public void disconnect() throws ApiConnectionException {
         if (!connected) {
             throw new ApiConnectionException(("Not/no longer connected to remote Mikrotik"));
@@ -341,7 +344,12 @@ public final class ApiConnectionImpl extends ApiConnection {
                 if (line.startsWith(("="))) {
                     String parts[] = line.split("=", 3);
                     if (parts.length == 3) {
-                        res.put(parts[1], parts[2]);
+                        if (!parts[2].endsWith("\r")) {
+                            res.put(parts[1], parts[2]);
+                        }
+                        else {
+                            res.put(parts[1], unpackMultiLine(parts[2]));
+                        }
                     } else {
                         throw new ApiDataException(String.format("Malformed line '%s'", line));
                     }
@@ -363,6 +371,15 @@ public final class ApiConnectionImpl extends ApiConnection {
             return res;
         }
 
+        private String unpackMultiLine(String head) throws ApiConnectionException, ApiDataException {
+            StringBuilder buf = new StringBuilder(head);
+            do {
+                nextLine();
+                buf.append(line);
+            } while (line.endsWith("\r"));
+            return buf.toString();
+        }
+        
         private Done unpackDone() throws MikrotikApiException {
             Done done = new Done(null);
             if (hasNextLine()) {
