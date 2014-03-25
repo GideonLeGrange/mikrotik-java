@@ -39,3 +39,7 @@ Mtik.java
 
 # Jekyll 
 _site/
+
+.classpath
+
+.project
