@@ -36,7 +36,11 @@ To open an encrypted (TLS) connection is as simple, assuming the default API-SSL
 ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router using TLS
 ```
 
-Currently only anonymous TLS is supported, not certificates. 
+#### Notes about TLS: 
+* Currently only anonymous TLS is supported, not certificates. 
+* There is a compatibility problem between the current versions of RouterOS supporting API over TLS and the Java Cryptography Extension (JCE) in Java 7 and earlier. TLS encryption works in Java 8 and later. For more information, feel free to contact me. 
+
+
 
 In following examples the connection, login and disconnection code will not be repeated. 
 
