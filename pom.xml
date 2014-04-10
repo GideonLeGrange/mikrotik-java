@@ -68,6 +68,20 @@
                     <excludePackageNames>example;*.impl</excludePackageNames>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+ 
         </plugins>
     </build>
     <properties>
@@ -80,6 +94,20 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.2.1</version>
+            <classifier>complete</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>4.2.1</version>
+            <classifier>complete</classifier>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
