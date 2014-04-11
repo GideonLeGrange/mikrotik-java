@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
@@ -44,8 +45,13 @@ class Parser {
         if (token == Token.EQUALS) {
             next();
             expect(Token.NAME);
-            cmd.addParameter(new Parameter(name, text));
+            String val = text;
             next();
+            while (token == Token.COMMA) {
+                next();
+                val = val + "," + text;
+            }
+            cmd.addParameter(new Parameter(name, val));
         }
         else {
             cmd.addParameter(new Parameter(name));
@@ -173,9 +179,10 @@ class Parser {
        // System.out.printf("%s: %s\n", token, text);
     }
 
-    private Parser(String text) {
-        text = text.trim();
-        StringTokenizer st = new StringTokenizer(text, " \t,=", true);
+    private Parser(String line) {
+        line = line.trim();
+        StringTokenizer st = new StringTokenizer(line, " \t,=", true);
+        boolean quote = false;
         while (st.hasMoreElements()) {
             String t = st.nextToken().trim();
             if (!t.equals("")) {
@@ -183,6 +190,7 @@ class Parser {
             }
         }
     }
+    
     private final List<String> words = new LinkedList<String>();
     private String text;
     private Token token;

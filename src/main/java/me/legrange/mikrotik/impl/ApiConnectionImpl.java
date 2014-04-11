@@ -486,7 +486,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 throw new ApiConnectionException(ex.getMessage(), ex);
             }
             if (err != null) {
-                throw err;
+                throw new MikrotikApiException(err.getMessage(), err);
             }
             return results;
         }
