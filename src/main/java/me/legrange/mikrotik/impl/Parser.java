@@ -20,7 +20,7 @@ class Parser {
     /** run parse on the internal data and return the command object */
     private Command parse() throws ParseException {
         command();
-        while (!((token == Token.WHERE) || (token == Token.RETURN) || (token == Token.EOL))) {
+        while (!is(Token.WHERE, Token.RETURN, Token.EOL)) { 
             param();
         }
         if (token == Token.WHERE) {
@@ -54,8 +54,8 @@ class Parser {
             expect(Token.TEXT);
             StringBuilder val = new StringBuilder(text);
             next();
-            while (token == Token.COMMA) {
-                val.append(",");
+            while (is(Token.COMMA, Token.SLASH)) {
+                val.append(token);
                 next();
                 expect(Token.TEXT);
                 val.append(text);
@@ -163,10 +163,15 @@ class Parser {
     }
 
     private void expect(Token...tokens) throws ParseException {
+        if (!is(tokens)) 
+            throw new ParseException(String.format("Expected %s but found %s at position %d", Arrays.asList(tokens), this.token, scanner.pos()));
+    }
+    
+    private boolean is(Token...tokens) {
         for (Token want : tokens) {
-            if (this.token == want) return;
+            if (this.token == want) return true;
         }
-        throw new ParseException(String.format("Expected %s but found %s at position %d", Arrays.asList(tokens), this.token, scanner.pos()));
+        return false;
     }
 
     /** move to the next token returned by the scanner */
