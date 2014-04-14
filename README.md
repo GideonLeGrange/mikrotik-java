@@ -8,9 +8,10 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 Versions
 --------
 
-The current stable version 1.1.2, which adds support for handling multi-line results, like for example /file print. 
+The current stable version 1.1.3, which fixes two severe command line parsing bugs, #3 and #4. 
 
-Version 1.1 added TLS (SSL) support to encrypt API traffic. 
+* 1.1.2 added support for handling multi-line results, like for example /file print. 
+* 1.1 added TLS (SSL) support to encrypt API traffic. 
 
 
 Examples
