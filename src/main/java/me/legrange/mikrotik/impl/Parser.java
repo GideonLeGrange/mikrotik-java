@@ -11,15 +11,6 @@ import me.legrange.mikrotik.impl.Scanner.Token;
  */
 class Parser {
 
-    public static void main(String...args) throws Exception { 
-     /*   System.out.println(parse("/system/reboot"));
-        System.out.println(parse("/interface/print where type=ether"));
-        System.out.println(parse("/interface/wireless/monitor .id=wlan1"));
-        System.out.println(parse("/ip/firewall/filter/add action=drop chain=forward in-interface=gre1 protocol=udp dst-port=78,80"));
-        System.out.println(parse("/file/print detail where name=conf.rsc"));
-        System.out.println(parse("/ip/firewall/filter/add action=drop chain=forward in-interface=aps_hs protocol=udp dst-port=78,80,32")); */ 
-        System.out.println(parse("/interface/gre/set .id=gre1 comment=\"test coment\""));
-    }
     /** parse the given bit of text into a Command object */
     static Command parse(String text) throws ParseException {
         Parser parser = new Parser(text);
