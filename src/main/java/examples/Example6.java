@@ -18,7 +18,7 @@ public class Example6 extends Example {
 
     private void test() throws MikrotikApiException, InterruptedException {
         System.out.println("Creating interface gre1");
-        con.execute("/interface/gre/add remote-address=1.2.3.4 name=gre1 keepalive=10 comment=\"test comment\"");
+        con.execute("/interface/gre/add remote-address=1.2.3.4 name=gre1 keepalive=10 comment='test comment'");
         System.out.println("Adding firewall rule for interface gre1");
         con.execute("/ip/firewall/filter/add action=drop chain=forward in-interface=gre1 protocol=udp dst-port=78,80");//,80,32");
         System.out.println("Waiting 10 seconds");

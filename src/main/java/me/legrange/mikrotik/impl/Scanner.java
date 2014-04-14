@@ -74,7 +74,9 @@ class Scanner {
                 nextChar(); 
                 return Token.EQUALS;
             case '"' : 
-                return quotedText();
+                return quotedText('"');
+            case '\'' : 
+                return quotedText('\'');
             default :
                 return name();
         }
@@ -109,10 +111,10 @@ class Scanner {
     }
     
     /** process quoted text */
-    private Token quotedText() throws ScanException {
+    private Token quotedText(char quote) throws ScanException {
         nextChar(); // eat the '"'
         text = new StringBuilder();
-        while (c != '"') {
+        while (c != quote) {
             if (c == '\n') {
                 throw new ScanException("Unclosed quoted text, reached end of line.");
             }
