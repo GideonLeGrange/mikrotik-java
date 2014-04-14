@@ -189,8 +189,6 @@ class Parser {
         next();
     }
     
-    
-    
     private final Scanner scanner;
     private Token token;
     private String text;
