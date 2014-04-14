@@ -1,11 +1,9 @@
 package me.legrange.mikrotik.impl;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import me.legrange.mikrotik.impl.Scanner.Token;
 
 /**
  * Parse the pseudo-command line into command objects. 
@@ -21,11 +19,8 @@ class Parser {
 
     /** run parse on the internal data and return the command object */
     private Command parse() throws ParseException {
-        next();
-        expect(Token.COMMAND);
-        cmd = new Command(text);
-        next();
-        while (!((token == Token.WHERE) || (token == Token.RETURN) || (token == Token.EOL))) {
+        command();
+        while (!is(Token.WHERE, Token.RETURN, Token.EOL)) { 
             param();
         }
         if (token == Token.WHERE) {
@@ -37,15 +32,36 @@ class Parser {
         expect(Token.EOL);
         return cmd;
     }
+    
+    private void command() throws ParseException {
+        StringBuilder path = new StringBuilder();
+        do {
+            expect(Token.SLASH);
+            path.append("/");
+            next();
+            expect(Token.TEXT);
+            path.append(text);
+            next();
+        } while (token == Token.SLASH);
+        cmd = new Command(path.toString());
+    }
 
     private void param() throws ParseException {
         String name = text;
         next();
         if (token == Token.EQUALS) {
             next();
-            expect(Token.NAME);
-            cmd.addParameter(new Parameter(name, text));
+            expect(Token.TEXT);
+            StringBuilder val = new StringBuilder(text);
             next();
+            while (is(Token.COMMA, Token.SLASH)) {
+                val.append(token);
+                next();
+                expect(Token.TEXT);
+                val.append(text);
+                next();
+            }
+            cmd.addParameter(new Parameter(name, val.toString()));
         }
         else {
             cmd.addParameter(new Parameter(name));
@@ -58,12 +74,12 @@ class Parser {
     }
 
     private void expr() throws ParseException {
-        expect(Token.NOT, Token.NAME);
+        expect(Token.NOT, Token.TEXT);
         switch (token) {
             case NOT:
                 notExpr();
                 break;
-            case NAME: {
+            case TEXT: {
                 String name = text;
                 next();
                 expect(Token.EQUALS, Token.LESS, Token.MORE);
@@ -110,19 +126,20 @@ class Parser {
         cmd.addQuery("?#!");
     }
 
-    private void eqExpr(String name) {
+    private void eqExpr(String name) throws  ParseException {
         next(); // eat = 
+        expect(Token.TEXT);
         cmd.addQuery(String.format("?%s=%s", name, text));
         next();
     }
 
-    private void lessExpr(String name) {
+    private void lessExpr(String name) throws ScanException {
         next(); // eat < 
         cmd.addQuery(String.format("?<%s=%s", name, text));
         next();
     }
 
-    private void moreExpr(String name) {
+    private void moreExpr(String name) throws ScanException {
         next(); // eat >
         cmd.addQuery(String.format("?>%s=%s", name, text));
         next();
@@ -134,8 +151,8 @@ class Parser {
 
     private void returns() throws ParseException {
         next();
-        expect(Token.NAME);
-        List<String> props = new LinkedList<String>();
+        expect(Token.TEXT);
+        List<String> props = new LinkedList<>();
         while (!(token == Token.EOL)) {
             if (token != Token.COMMA) {
                 props.add(text);
@@ -146,63 +163,35 @@ class Parser {
     }
 
     private void expect(Token...tokens) throws ParseException {
+        if (!is(tokens)) 
+            throw new ParseException(String.format("Expected %s but found %s at position %d", Arrays.asList(tokens), this.token, scanner.pos()));
+    }
+    
+    private boolean is(Token...tokens) {
         for (Token want : tokens) {
-            if (this.token == want) return;
+            if (this.token == want) return true;
         }
-        throw new ParseException(String.format("Expected %s but found %s", Arrays.asList(tokens), this.token));
+        return false;
     }
 
-    private void next() {
-        if (!words.isEmpty()) {
-            text = words.remove(0);
-            if (text.startsWith("/")) {
-                token = Token.COMMAND;
-            } else {
-                Token t = lookup.get(text);
-                if (t != null) {
-                    token = t;
-                    text = "";
-                } else {
-                    token = Token.NAME;
-                }
-            }
-        } else {
-            token = Token.EOL;
-            text = "";
+    /** move to the next token returned by the scanner */
+    private void next() throws ScanException {
+        token = scanner.next();
+        while (token == Token.WS) {
+            token = scanner.next();
         }
-       // System.out.printf("%s: %s\n", token, text);
+        text = scanner.text();
     }
 
-    private Parser(String text) {
-        text = text.trim();
-        StringTokenizer st = new StringTokenizer(text, " \t,=", true);
-        while (st.hasMoreElements()) {
-            String t = st.nextToken().trim();
-            if (!t.equals("")) {
-                words.add(t);
-            }
-        }
+    private Parser(String line) throws ScanException {
+        line = line.trim();
+        scanner = new Scanner(line);
+        next();
     }
-    private final List<String> words = new LinkedList<String>();
-    private String text;
+    
+    private final Scanner scanner;
     private Token token;
+    private String text;
     private Command cmd;
-    private static final Map<String, Token> lookup = new HashMap<String, Token>();
 
-    private enum Token {
-
-        COMMAND, WHERE, RETURN, EOL, NOT, AND, OR, NAME, EQUALS, MORE, LESS, COMMA;
-    }
-
-    static {
-        lookup.put("where", Token.WHERE);
-        lookup.put("return", Token.RETURN);
-        lookup.put("not", Token.NOT);
-        lookup.put("and", Token.AND);
-        lookup.put("or", Token.OR);
-        lookup.put("=", Token.EQUALS);
-        lookup.put(">", Token.MORE);
-        lookup.put("<", Token.LESS);
-        lookup.put(",", Token.COMMA);
-    }
 }
