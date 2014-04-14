@@ -44,11 +44,13 @@ class Scanner {
         private final String symb;
      }
     
+    /** create a scanner for the given line of text */
     Scanner(String line) {
         this.line = line;
         nextChar();
     }
     
+    /** return the next token from the text */
     Token next() throws ScanException {
         text = null;
         switch (c) {
@@ -79,18 +81,23 @@ class Scanner {
         
     }
     
+    /** return the text associated with the last token returned */
     String text()  {
         if (text != null) return text.toString(); 
         return "";
     }
     
+    /** return the position of the scanner */
+    int pos() { return pos; }
+    
+    /** process 'name' tokens which could be key words or text */
     private Token name() throws ScanException {
         text = new StringBuilder();
         while (in(c,"[A-Za-z0-9-\\.]")) {
             text.append(c);
             nextChar();
         }
-        String val = text.toString();
+        String val = text.toString().toLowerCase();
         switch  (val) {
             case "where" : return Token.WHERE;
             case "not" : return Token.NOT;
@@ -107,7 +114,7 @@ class Scanner {
         text = new StringBuilder();
         while (c != '"') {
             if (c == '\n') {
-                throw new ScanException("Unclosed quoted text");
+                throw new ScanException("Unclosed quoted text, reached end of line.");
             }
             text.append(c);
             nextChar();
@@ -124,6 +131,7 @@ class Scanner {
         return Token.WS;
     }
     
+    /** return the next character from the line of text */
     private void nextChar() {
         if (pos < line.length()) {
            c = line.charAt(pos);
@@ -134,6 +142,7 @@ class Scanner {
         }
     }
     
+    /** check if the character matches the give expression */
     private boolean in(char c, String cs) {
         return ("" + c).matches(cs);
     }

@@ -175,13 +175,12 @@ class Parser {
         for (Token want : tokens) {
             if (this.token == want) return;
         }
-        throw new ParseException(String.format("Expected %s but found %s", Arrays.asList(tokens), this.token));
+        throw new ParseException(String.format("Expected %s but found %s at position %d", Arrays.asList(tokens), this.token, scanner.pos()));
     }
 
+    /** move to the next token returned by the scanner */
     private void next() throws ScanException {
-//        Token was = token;
         token = scanner.next();
- //       System.out.printf("'%s' => '%s'\n", was, token);
         while (token == Token.WS) {
             token = scanner.next();
         }
