@@ -95,7 +95,7 @@ class Scanner {
     /** process 'name' tokens which could be key words or text */
     private Token name() throws ScanException {
         text = new StringBuilder();
-        while (in(c,"[A-Za-z0-9-\\.]")) {
+        while (in(c,"[A-Za-z0-9-\\.\\*]")) {
             text.append(c);
             nextChar();
         }
