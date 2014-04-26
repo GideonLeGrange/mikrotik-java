@@ -124,8 +124,7 @@ String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to
   );
 ```
 
-The above command will run and send results asynchronously as they become available, until it is canceled. The command (identified by the unique String retruned) 
- is canceled like this:
+The above command will run and send results asynchronously as they become available, until it is canceled. The command (identified by the unique String returned) is canceled like this:
 
 ```java
 con.cancel(tag);
