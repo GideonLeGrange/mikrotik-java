@@ -9,7 +9,7 @@
 
     <groupId>me.legrange</groupId>
     <artifactId>mikrotik</artifactId>
-    <version>1.1.6-SNAPSHOT</version>
+    <version>1.1.6</version>
     <packaging>jar</packaging>
 
     <name>Mikrotik API Java Client Library</name>
@@ -90,7 +90,7 @@
 	            <configuration>
 	                <mavenExecutorId>forked-path</mavenExecutorId>
 	                <useReleaseProfile>false</useReleaseProfile>
-	                <arguments>${arguments} -Psonatype-oss-release</arguments>
+	                <arguments>-Psonatype-oss-release</arguments>
 	            </configuration>
 	        </plugin>
       
