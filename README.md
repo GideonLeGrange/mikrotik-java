@@ -15,6 +15,11 @@ The current stable version is 1.1.5, which fixes more comamnd line parsing bugs.
 * 1.1.2 added support for handling multi-line results, like for example /file print. 
 * 1.1 added TLS (SSL) support to encrypt API traffic. 
 
+Getting the API
+---------------
+
+You can clone or fork the repository. Alternatively, you can get the mikrotik-java jar from Maven Central.
+
 
 Examples
 ========
