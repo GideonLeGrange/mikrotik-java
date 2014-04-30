@@ -9,7 +9,7 @@
 
     <groupId>me.legrange</groupId>
     <artifactId>mikrotik</artifactId>
-    <version>1.1.7-SNAPSHOT</version>
+    <version>1.1.6</version>
     <packaging>jar</packaging>
 
     <name>Mikrotik API Java Client Library</name>
@@ -74,26 +74,18 @@
                 <artifactId>maven-gpg-plugin</artifactId>
                 <executions>
                     <execution>
+                        <configuration>
+                            <keyname>5CC0A81C</keyname>
+                        </configuration>
                         <id>sign-artifacts</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
-                        </goals>
+                         </goals>
                     </execution>
                 </executions>
             </plugin>
             
-            <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-release-plugin</artifactId>
-	            <version>2.1</version>
-	            <configuration>
-	                <mavenExecutorId>forked-path</mavenExecutorId>
-	                <useReleaseProfile>false</useReleaseProfile>
-	                <arguments>-Psonatype-oss-release</arguments>
-	            </configuration>
-	        </plugin>
-      
         </plugins>
     </build>
     <properties>
