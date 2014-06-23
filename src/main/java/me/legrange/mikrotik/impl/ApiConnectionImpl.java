@@ -33,7 +33,8 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @param port The TCP port to use.
      * @param secure Is TLS required
      * @return The ApiConnection
-     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a problem connecting
+     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
+     * problem connecting
      */
     public static ApiConnection connect(String host, int port, boolean secure) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
@@ -53,7 +54,9 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     /**
      * Disconnect from the remote API
-     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a problem disconnecting
+     *
+     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
+     * problem disconnecting
      */
     @Override
     public void disconnect() throws ApiConnectionException {
@@ -284,22 +287,15 @@ public final class ApiConnectionImpl extends ApiConnection {
                 if (l != null) {
                     if (res instanceof Result) {
                         l.receive((Result) res);
-                    } else {
-                        if (res instanceof Done) {
-                            listeners.remove(res.getTag());
+                    } else if (res instanceof Done) {
+                        if (l instanceof SyncListener) {
+                            ((SyncListener) l).completed((Done) res);
+                        } else {
+                            l.completed();
                         }
-                        if (l instanceof ResponseListener) {
-                            ResponseListener rl = (ResponseListener) l;
-                            if (res instanceof Done) {
-                                if (rl instanceof SyncListener) {
-                                    ((SyncListener) rl).completed((Done) res);
-                                } else {
-                                    rl.completed();
-                                }
-                            } else if (res instanceof Error) {
-                                rl.error(new ApiCommandException((Error) res));
-                            }
-                        }
+                        listeners.remove(res.getTag());
+                    } else if (res instanceof Error) {
+                        l.error(new ApiCommandException((Error) res));
                     }
                 }
             }
@@ -322,16 +318,17 @@ public final class ApiConnectionImpl extends ApiConnection {
             if (line == null) {
                 nextLine();
             }
-            if (line.equals("!re")) {
-                return unpackRe();
-            } else if (line.equals("!done")) {
-                return unpackDone();
-            } else if (line.equals("!trap")) {
-                return unpackError();
-            } else if (line.equals("!halt")) {
-                return unpackError();
-            } else {
-                throw new ApiDataException(String.format("Unexpected line '%s'", line));
+            switch (line) {
+                case "!re":
+                    return unpackRe();
+                case "!done":
+                    return unpackDone();
+                case "!trap":
+                    return unpackError();
+                case "!halt":
+                    return unpackError();
+                default:
+                    throw new ApiDataException(String.format("Unexpected line '%s'", line));
             }
         }
 
@@ -346,8 +343,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     if (parts.length == 3) {
                         if (!parts[2].endsWith("\r")) {
                             res.put(parts[1], parts[2]);
-                        }
-                        else {
+                        } else {
                             res.put(parts[1], unpackMultiLine(parts[2]));
                         }
                     } else {
@@ -379,7 +375,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             } while (line.endsWith("\r"));
             return buf.toString();
         }
-        
+
         private Done unpackDone() throws MikrotikApiException {
             Done done = new Done(null);
             if (hasNextLine()) {
@@ -451,7 +447,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         private String line;
     }
 
-    private class SyncListener implements ResponseListener {
+    private class SyncListener implements ResultListener {
 
         public synchronized void error(MikrotikApiException ex) {
             this.err = ex;

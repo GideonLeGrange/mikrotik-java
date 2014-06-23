@@ -9,5 +9,12 @@ import java.util.Map;
 public interface ResultListener {
     
     void receive(Map<String, String> result);
+
+    /** called if the command associated with this listener experiences an error
+     * @param ex Exception encountered */
+    void error(MikrotikApiException ex);
     
+    /** called when the command associated with this listener is done */
+    void completed();
+   
 }
