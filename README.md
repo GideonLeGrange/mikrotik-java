@@ -16,6 +16,10 @@ The current stable version is 1.1.6, which managed to get into Maven Central.
 * 1.1.2 added support for handling multi-line results, like for example /file print. 
 * 1.1 added TLS (SSL) support to encrypt API traffic. 
 
+The latest development version is 2.0.0 which is available using the 2.0.0 branch. 
+
+* Changed ResultListener to receive errors and completion notifications. 
+
 Getting the API
 ---------------
 
@@ -116,7 +120,7 @@ Asynchronous commands
 
 We can run some commands asynchronously in order to continue receiving updates:
 
-This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it
+This example shows how to run '/interface wireless monitor' and have the result sent to a listener object, which prints it:
 
 ```java
 String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to-noise", 
@@ -125,6 +129,14 @@ String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to
             public void receive(Map<String, String> result) {
                 System.out.println(result);
             }
+
+           public void error(MikrotikApiException e) {
+               System.out.println("An error occurred: " + e.getMessage());
+           }
+
+           public void completed() {
+                System.out.println("Asynchronous command has finished"); 
+           }
             
         }
   );
@@ -135,6 +147,8 @@ The above command will run and send results asynchronously as they become availa
 ```java
 con.cancel(tag);
 ```
+
+From version 2.0.0 of the API the error() and completed() methods are part of the ResultListener interface. 
 
 References
 ==========
