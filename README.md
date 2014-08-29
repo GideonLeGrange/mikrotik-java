@@ -8,7 +8,11 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 Versions
 --------
 
-The current stable version is 1.1.6, which managed to get into Maven Central.
+The current stable version is 2.0.0. This version is not backwards compatible with version 1.x. 
+
+* Changed ResultListener to receive errors and completion notifications. 
+
+Previous versions:
 
 * 1.1.5 fixed even more comamnd line parsing bugs.
 * 1.1.4 fixed command line parsing bugs #7 and #8.
@@ -18,7 +22,6 @@ The current stable version is 1.1.6, which managed to get into Maven Central.
 
 The latest development version is 2.0.0 which is available using the 2.0.0 branch. 
 
-* Changed ResultListener to receive errors and completion notifications. 
 
 Getting the API
 ---------------
