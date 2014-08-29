@@ -2,7 +2,7 @@ package examples;
 
 import java.util.Map;
 import me.legrange.mikrotik.MikrotikApiException;
-import me.legrange.mikrotik.ResponseListener;
+import me.legrange.mikrotik.ResultListener;
 
 /**
  * Example 5: Asynchronous results, with error and completion. Run a command and receive results, errors and completion notification for it asynchronously with a ResponseListener
@@ -20,7 +20,7 @@ public class Example5 extends Example {
 
     private void test() throws MikrotikApiException, InterruptedException {
         boolean completed = false;
-       String id = con.execute("/interface/wireless/monitor .id=wlan1", new ResponseListener() {
+       String id = con.execute("/interface/wireless/monitor .id=wlan1", new ResultListener() {
            private int prev = 0;
 
            public void receive(Map<String, String> result) {
