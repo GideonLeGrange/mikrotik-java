@@ -28,6 +28,11 @@ Getting the API
 
 You can clone or fork the repository. Alternatively, you can get the jar from Maven Central.
 
+Contributing
+------------
+
+I welcome contributions, be it bug fixes or other improvements. If you fix or change something, please submit a pull request. If you want to report a bug, please open an issue. 
+
 
 Examples
 ========
