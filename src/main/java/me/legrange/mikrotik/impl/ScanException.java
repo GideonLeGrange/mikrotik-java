@@ -1,7 +1,5 @@
 package me.legrange.mikrotik.impl;
 
-import me.legrange.mikrotik.MikrotikApiException;
-
 /**
  * Exception thrown if the scanner encounters an error while scanning a command line.
  * @author GideonLeGrange

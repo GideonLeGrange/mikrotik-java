@@ -1,6 +1,5 @@
 package me.legrange.mikrotik.impl;
 
-import me.legrange.mikrotik.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,14 +8,17 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-//import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import me.legrange.mikrotik.ApiConnection;
+import me.legrange.mikrotik.ApiConnectionException;
+import me.legrange.mikrotik.MikrotikApiException;
+import me.legrange.mikrotik.ResultListener;
 
 /**
  * The Mikrotik API connection implementation. This is the class used to connect
@@ -77,12 +79,15 @@ public final class ApiConnectionImpl extends ApiConnection {
      *
      * @param username - username of the user on the router
      * @param password - password for the user
+     * @throws me.legrange.mikrotik.MikrotikApiException
+     * @throws java.lang.InterruptedException
      */
+    @Override
     public void login(String username, String password) throws MikrotikApiException, InterruptedException {
         List<Map<String, String>> list = execute("/login");
         Map<String, String> res = list.get(0);
         String hash = res.get("ret");
-        String chal = Util.hexStrToStr("00") + new String(makePass(password)) + Util.hexStrToStr(hash);
+        String chal = Util.hexStrToStr("00") + new String(password.toCharArray()) + Util.hexStrToStr(hash);
         chal = Util.hashMD5(chal);
         execute("/login name=" + username + " response=00" + chal);
     }
@@ -92,7 +97,9 @@ public final class ApiConnectionImpl extends ApiConnection {
      *
      * @param cmd Command to execute
      * @return The list of results
+     * @throws me.legrange.mikrotik.MikrotikApiException
      */
+    @Override
     public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
         return execute(Parser.parse(cmd));
     }
@@ -105,13 +112,17 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @return A command object that can be used to cancel the command.
      * @throws MikrotikApiException
      */
+    @Override
     public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
         return execute(Parser.parse(cmd), lis);
     }
 
     /**
      * cancel a command
+     * @param tag
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if an error is experienced while canceling the 
      */
+    @Override
     public void cancel(String tag) throws MikrotikApiException {
         execute(String.format("/cancel tag=%s", tag));
     }
@@ -137,6 +148,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     private ApiConnectionImpl() {
+        this.listeners = new ConcurrentHashMap<>();
     }
 
     /**
@@ -180,7 +192,7 @@ public final class ApiConnectionImpl extends ApiConnection {
      */
     private Socket openSSLSocket(InetAddress ia, int port) throws IOException {
         SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket(ia, port);
-        List<String> cs = new LinkedList<String>();
+        List<String> cs = new LinkedList<>();
         // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
         // caused by a "SSL peer shut down incorrectly" error
         for (String s : ssl.getSupportedCipherSuites()) {
@@ -190,16 +202,6 @@ public final class ApiConnectionImpl extends ApiConnection {
         }
         ssl.setEnabledCipherSuites(cs.toArray(new String[]{}));
         return ssl;
-    }
-
-    private char[] makePass(String pass) {
-        if (true) {
-            return pass.toCharArray();
-        }
-        char[] res = new char[pass.length() + 1];
-        System.arraycopy(pass.toCharArray(), 0, res, 0, pass.length());
-        res[pass.length()] = 0x0;
-        return res;
     }
 
     private synchronized String nextTag() {
@@ -213,7 +215,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     private boolean connected = false;
     private Reader reader;
     private Processor processor;
-    private final Map<String, ResultListener> listeners = new HashMap<String, ResultListener>();
+    private final Map<String, ResultListener> listeners;
     private Integer _tag = 0;
 
     /**
@@ -253,12 +255,11 @@ public final class ApiConnectionImpl extends ApiConnection {
                         queue.put(ex);
                     } catch (InterruptedException ex2) {
                     }
-                } catch (ApiConnectionException ex) {
-                } catch (InterruptedException ex1) {
+                } catch (ApiConnectionException | InterruptedException ex) {
                 }
             }
         }
-        private LinkedBlockingQueue queue = new LinkedBlockingQueue(40);
+        private final LinkedBlockingQueue queue = new LinkedBlockingQueue(40);
     }
 
     /**
@@ -280,7 +281,6 @@ public final class ApiConnectionImpl extends ApiConnection {
                         continue;
                     }
                 } catch (MikrotikApiException ex) {
-                    ex.printStackTrace();
                     continue;
                 }
                 ResultListener l = listeners.get(res.getTag());
@@ -443,17 +443,19 @@ public final class ApiConnectionImpl extends ApiConnection {
                 }
             }
         }
-        private List<String> lines = new LinkedList<String>();
+        private final List<String> lines = new LinkedList<>();
         private String line;
     }
 
     private class SyncListener implements ResultListener {
 
+        @Override
         public synchronized void error(MikrotikApiException ex) {
             this.err = ex;
             notify();
         }
 
+        @Override
         public synchronized void completed() {
             notify();
         }
@@ -467,6 +469,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             notify();
         }
 
+        @Override
         public void receive(Map<String, String> result) {
             results.add(result);
         }
@@ -486,7 +489,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return results;
         }
-        private List<Map<String, String>> results = new LinkedList<Map<String, String>>();
+        private final List<Map<String, String>> results = new LinkedList<>();
         private MikrotikApiException err;
     }
 }
