@@ -87,6 +87,8 @@ class Parser {
                     case EQUALS:
                         eqExpr(name);
                         break;
+                    case NOT_EQUALS :
+                        notExpr(name);
                     case LESS:
                         lessExpr(name);
                         break;
@@ -139,6 +141,13 @@ class Parser {
         next();
     }
 
+    private void notExpr(String name) throws ScanException {
+        next(); // eat !=
+        cmd.addQuery(String.format("?%s=%s", name, text));
+        cmd.addQuery("?#!");
+        next();
+    }
+    
     private void moreExpr(String name) throws ScanException {
         next(); // eat >
         cmd.addQuery(String.format("?>%s=%s", name, text));
