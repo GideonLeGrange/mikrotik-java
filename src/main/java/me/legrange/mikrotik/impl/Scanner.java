@@ -24,7 +24,7 @@ class Scanner {
     
     enum Token {
         SLASH("/"), COMMA(","), EOL(), WS, TEXT, 
-        LESS("<"), MORE(">"), EQUALS("="),
+        LESS("<"), MORE(">"), EQUALS("="), NOT_EQUALS("!="),
         WHERE, NOT, AND, OR, RETURN;
 
         @Override
@@ -73,6 +73,8 @@ class Scanner {
             case '=' : 
                 nextChar(); 
                 return Token.EQUALS;
+            case '!' : 
+                return notEquals();
             case '"' : 
                 return quotedText('"');
             case '\'' : 
@@ -133,6 +135,15 @@ class Scanner {
         return Token.WS;
     }
     
+    /** process the not equals token */
+    private Token notEquals() throws ScanException {
+        nextChar(); // eat the !
+        if (c != '=') {
+                throw new ScanException(String.format("Expected = after !, found '%c'", c));
+        }
+        return Token.NOT_EQUALS;
+    }
+     
     /** return the next character from the line of text */
     private void nextChar() {
         if (pos < line.length()) {
