@@ -24,5 +24,5 @@ abstract class Response {
         this.tag = tag;
     }
     
-    private String tag;
+    private  String tag;
 }

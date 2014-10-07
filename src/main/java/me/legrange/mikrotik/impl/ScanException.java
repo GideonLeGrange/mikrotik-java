@@ -14,6 +14,4 @@ public class ScanException extends ParseException {
         super(msg, err);
     }
     
-    
-    
 }
