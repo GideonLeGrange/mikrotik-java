@@ -82,13 +82,14 @@ class Parser {
             case TEXT: {
                 String name = text;
                 next();
-                expect(Token.EQUALS, Token.LESS, Token.MORE);
+                expect(Token.EQUALS, Token.LESS, Token.MORE, Token.NOT_EQUALS);
                 switch (token) {
                     case EQUALS:
                         eqExpr(name);
                         break;
                     case NOT_EQUALS :
                         notExpr(name);
+                        break;
                     case LESS:
                         lessExpr(name);
                         break;
@@ -106,6 +107,7 @@ class Parser {
             case AND : andExpr();
                 break;
             case OR : orExpr();
+                break;
         }
     }
     

@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package me.legrange.mikrotik.impl;
 
 /**
  * A simple scanner.
+ *
  * @author gideon
  */
 class Scanner {
-    
+
     enum Token {
-        SLASH("/"), COMMA(","), EOL(), WS, TEXT, 
+
+        SLASH("/"), COMMA(","), EOL(), WS, TEXT,
         LESS("<"), MORE(">"), EQUALS("="), NOT_EQUALS("!="),
         WHERE, NOT, AND, OR, RETURN;
 
@@ -35,84 +36,105 @@ class Scanner {
         private Token(String symb) {
             this.symb = symb;
         }
-        
+
         private Token() {
             symb = null;
         }
-        
-        
+
         private final String symb;
-     }
-    
-    /** create a scanner for the given line of text */
+    }
+
+    /**
+     * create a scanner for the given line of text
+     */
     Scanner(String line) {
         this.line = line;
         nextChar();
     }
-    
-    /** return the next token from the text */
+
+    /**
+     * return the next token from the text
+     */
     Token next() throws ScanException {
         text = null;
         switch (c) {
-            case '\n' : return Token.EOL;
-            case ' '  : 
-            case '\t' : 
+            case '\n':
+                return Token.EOL;
+            case ' ':
+            case '\t':
                 return whiteSpace();
-            case ',' :
+            case ',':
                 nextChar();
                 return Token.COMMA;
-            case '/' : 
-                nextChar(); 
+            case '/':
+                nextChar();
                 return Token.SLASH;
-            case '<' : 
-                nextChar(); 
+            case '<':
+                nextChar();
                 return Token.LESS;
-            case '>' : 
-                nextChar(); 
+            case '>':
+                nextChar();
                 return Token.MORE;
-            case '=' : 
-                nextChar(); 
+            case '=':
+                nextChar();
                 return Token.EQUALS;
-            case '!' : 
+            case '!':
                 return notEquals();
-            case '"' : 
+            case '"':
                 return quotedText('"');
-            case '\'' : 
+            case '\'':
                 return quotedText('\'');
-            default :
+            default:
                 return name();
         }
-        
+
     }
-    
-    /** return the text associated with the last token returned */
-    String text()  {
-        if (text != null) return text.toString(); 
+
+    /**
+     * return the text associated with the last token returned
+     */
+    String text() {
+        if (text != null) {
+            return text.toString();
+        }
         return "";
     }
-    
-    /** return the position of the scanner */
-    int pos() { return pos; }
-    
-    /** process 'name' tokens which could be key words or text */
+
+    /**
+     * return the position of the scanner
+     */
+    int pos() {
+        return pos;
+    }
+
+    /**
+     * process 'name' tokens which could be key words or text
+     */
     private Token name() throws ScanException {
         text = new StringBuilder();
-        while (!in(c, "[ \t\r\n=<>]")) {
+        while (!in(c, "[ \t\r\n=<>!]")) {
             text.append(c);
             nextChar();
         }
         String val = text.toString().toLowerCase();
-        switch  (val) {
-            case "where" : return Token.WHERE;
-            case "not" : return Token.NOT;
-            case "and" : return Token.AND;
-            case "or" : return Token.OR;
-            case "return" : return Token.RETURN;
+        switch (val) {
+            case "where":
+                return Token.WHERE;
+            case "not":
+                return Token.NOT;
+            case "and":
+                return Token.AND;
+            case "or":
+                return Token.OR;
+            case "return":
+                return Token.RETURN;
         }
         return Token.TEXT;
     }
-    
-    /** process quoted text */
+
+    /**
+     * process quoted text
+     */
     private Token quotedText(char quote) throws ScanException {
         nextChar(); // eat the '"'
         text = new StringBuilder();
@@ -126,40 +148,48 @@ class Scanner {
         nextChar(); // eat the '"'
         return Token.TEXT;
     }
-    
-    /** process white space */
+
+    /**
+     * process white space
+     */
     private Token whiteSpace() {
         while ((c == ' ') || (c == '\t')) {
             nextChar();
         }
         return Token.WS;
     }
-    
-    /** process the not equals token */
+
+    /**
+     * process the not equals token
+     */
     private Token notEquals() throws ScanException {
         nextChar(); // eat the !
         if (c != '=') {
-                throw new ScanException(String.format("Expected = after !, found '%c'", c));
+            throw new ScanException(String.format("Expected = after !, found '%c'", c));
         }
+        nextChar(); // eat the =
         return Token.NOT_EQUALS;
     }
-     
-    /** return the next character from the line of text */
+
+    /**
+     * return the next character from the line of text
+     */
     private void nextChar() {
         if (pos < line.length()) {
-           c = line.charAt(pos);
-            pos ++;
-        }
-        else {
+            c = line.charAt(pos);
+            pos++;
+        } else {
             c = '\n';
         }
     }
-    
-    /** check if the character matches the give expression */
+
+    /**
+     * check if the character matches the give expression
+     */
     private boolean in(char c, String cs) {
         return ("" + c).matches(cs);
     }
-    
+
     private final String line;
     private int pos = 0;
     private char c;
