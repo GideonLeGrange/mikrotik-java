@@ -15,6 +15,7 @@
  */
 package me.legrange.mikrotik.impl;
 
+import static me.legrange.mikrotik.impl.Scanner.Token.*;
 /**
  * A simple scanner.
  *
@@ -25,7 +26,7 @@ class Scanner {
     enum Token {
 
         SLASH("/"), COMMA(","), EOL(), WS, TEXT,
-        LESS("<"), MORE(">"), EQUALS("="), NOT_EQUALS("!="),
+        LESS("<"), MORE(">"), EQUALS("="), NOT_EQUALS("!="), PIPE("!"),
         WHERE, NOT, AND, OR, RETURN;
 
         @Override
@@ -59,27 +60,27 @@ class Scanner {
         text = null;
         switch (c) {
             case '\n':
-                return Token.EOL;
+                return EOL;
             case ' ':
             case '\t':
                 return whiteSpace();
             case ',':
                 nextChar();
-                return Token.COMMA;
+                return COMMA;
             case '/':
                 nextChar();
-                return Token.SLASH;
+                return SLASH;
             case '<':
                 nextChar();
-                return Token.LESS;
+                return LESS;
             case '>':
                 nextChar();
-                return Token.MORE;
+                return MORE;
             case '=':
                 nextChar();
-                return Token.EQUALS;
+                return EQUALS;
             case '!':
-                return notEquals();
+                return pipe();
             case '"':
                 return quotedText('"');
             case '\'':
@@ -119,17 +120,17 @@ class Scanner {
         String val = text.toString().toLowerCase();
         switch (val) {
             case "where":
-                return Token.WHERE;
+                return WHERE;
             case "not":
-                return Token.NOT;
+                return NOT;
             case "and":
-                return Token.AND;
+                return AND;
             case "or":
-                return Token.OR;
+                return OR;
             case "return":
-                return Token.RETURN;
+                return RETURN;
         }
-        return Token.TEXT;
+        return TEXT;
     }
 
     /**
@@ -146,7 +147,19 @@ class Scanner {
             nextChar();
         }
         nextChar(); // eat the '"'
-        return Token.TEXT;
+        return TEXT;
+    }
+
+    /**
+     * process notEquals !
+     */
+    private Token pipe() {
+        nextChar(); // eat !
+        if (c == '=') {
+            nextChar(); // eat =
+            return NOT_EQUALS;
+        }
+        return PIPE;
     }
 
     /**
@@ -156,19 +169,7 @@ class Scanner {
         while ((c == ' ') || (c == '\t')) {
             nextChar();
         }
-        return Token.WS;
-    }
-
-    /**
-     * process the not equals token
-     */
-    private Token notEquals() throws ScanException {
-        nextChar(); // eat the !
-        if (c != '=') {
-            throw new ScanException(String.format("Expected = after !, found '%c'", c));
-        }
-        nextChar(); // eat the =
-        return Token.NOT_EQUALS;
+        return WS;
     }
 
     /**
@@ -180,6 +181,17 @@ class Scanner {
             pos++;
         } else {
             c = '\n';
+        }
+    }
+
+    /**
+     * look ahead one character
+     */
+    private char peek() {
+        if (pos < line.length()) {
+            return line.charAt(pos);
+        } else {
+            return '\n';
         }
     }
 

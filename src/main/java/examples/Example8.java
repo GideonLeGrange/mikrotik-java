@@ -19,9 +19,10 @@ public class Example8 extends Example {
     }
 
     private void test() throws MikrotikApiException, InterruptedException {
-        List<Map<String, String>> res = con.execute("/ip/hotspot/user/print where uptime!=1");
+       List<Map<String, String>> res = con.execute("/ip/hotspot/user/print where uptime!=1");
         for (Map<String, String> r : res) {
             System.out.println(r);
-        }
+        } 
+//        con.execute("/ip/firewall/filter/add chain=forward hotspot=!auth protocol=tcp src-port=8000-8084");
     }
 }

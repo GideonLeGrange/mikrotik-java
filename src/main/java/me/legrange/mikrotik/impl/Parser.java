@@ -51,8 +51,13 @@ class Parser {
         next();
         if (token == Token.EQUALS) {
             next();
+            StringBuilder val = new StringBuilder();
+            if (token == Token.PIPE) { // handle cases like  hotspot=!auth 
+                val.append(token);
+                next();
+            }
             expect(Token.TEXT);
-            StringBuilder val = new StringBuilder(text);
+            val.append(text);
             next();
             while (is(Token.COMMA, Token.SLASH)) {
                 val.append(token);
