@@ -95,7 +95,7 @@ List<Map<String, String>> rs = con.execute("/interface/print where type=vlan");
 
 ### Selecting returned fields
 
-The same query, but we only want certain result fields names Print all interfaces of type 'vlan' and return their name.
+The same query, but we only want certain result fields names: Print all interfaces of type 'vlan' and return just their name.
 
 ```java
 List<Map<String, String>> rs = con.execute("/interface/print where type=vlan return name");
