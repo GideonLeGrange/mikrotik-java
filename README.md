@@ -42,6 +42,7 @@ I welcome contributions, be it bug fixes or other improvements. If you fix or ch
 
 Examples
 ========
+These examples show should illustrate how to use this library. Please note that I assume that the user is proficient in Java and understands the Mikrotik command line syntax.
 
 Here is a simple example: Connect to a router and reboot it. 
 
