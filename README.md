@@ -85,6 +85,14 @@ for (Map<String,String> r : rs) {
 }
 ```
 
+Results are returned as a list of maps of String key/value pairs. The reason for this is that a command can return multiple results, which have multpile variables. For example, to print the names of all the interfaces returned in the command above, do:
+
+```java
+for (Map<String, String> map : rs) { 
+  System.out.println(map.get("name"));
+}
+```
+
 ### Filtering results
 
 The same query, but with the results filtered: Print all interfaces of type 'vlan'.
