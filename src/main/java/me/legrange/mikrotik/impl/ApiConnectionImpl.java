@@ -66,6 +66,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             throw new ApiConnectionException(("Not/no longer connected to remote Mikrotik"));
         }
         connected = false;
+        processor.interrupt();
         reader.interrupt();
         try {
             sock.close();
