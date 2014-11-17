@@ -42,7 +42,7 @@ I recommend using the Maven artifact from Maven Central using this dependency:
   <version>2.0.2</version>
 </dependency>
 ```
-You can also clone or fork the repository, or download the source as a zip or tar.gz from [Releases]
+You can also clone or fork the repository, or download the source as a zip or tar.gz from [Releases](https://github.com/GideonLeGrange/mikrotik-java/releases)
 
 Contributing
 ------------
