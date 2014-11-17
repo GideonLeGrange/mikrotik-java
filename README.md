@@ -10,12 +10,13 @@ Versions
 
 This library uses [semantic versioning](http://semver.org/)
 
-The current stable version is 2.0.1. 
+The current stable version is 2.0.2. 
 
-* fixed parsing of !=, < and > operators in a where clause. 
+* Fixed bug #13 - processor thread wasn't being stopped on disconnect(), causing non-exit of application in some cases. 
 
 Previous 2.0 versions:
 
+* 2.0.1 fixed parsing of !=, < and > operators in a where clause. 
 * 2.0.0 changed ResultListener to receive errors and completion notifications. This version is not backwards compatible with version 1.x. 
 
 Previous 1.1 versions:
