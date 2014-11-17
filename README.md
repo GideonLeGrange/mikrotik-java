@@ -33,7 +33,16 @@ The latest development version is 2.0.0 which is available using the 2.0.0 branc
 Getting the API
 ---------------
 
-You can clone or fork the repository. Alternatively, you can get the jar from Maven Central.
+I recommend using the Maven artifact from Maven Central using this dependency:
+
+```xml
+<dependency>
+  <groupId>me.legrange</groupId>
+  <artifactId>mikrotik</artifactId>
+  <version>2.0.2</version>
+</dependency>
+```
+You can also clone or fork the repository, or download the source as a zip or tar.gz from [Releases]
 
 Contributing
 ------------
