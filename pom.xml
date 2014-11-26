@@ -96,7 +96,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <keyname>8D1FA6CF</keyname>
+                            <keyname>D20D95D7</keyname>
                         </configuration>
                         <id>sign-artifacts</id>
                         <phase>verify</phase>
