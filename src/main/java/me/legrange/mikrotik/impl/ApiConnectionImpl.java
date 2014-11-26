@@ -328,6 +328,8 @@ public final class ApiConnectionImpl extends ApiConnection {
                     return unpackError();
                 case "!halt":
                     return unpackError();
+                case "" : 
+                    System.out.printf("sock.isClosed() = %s, sock.isInputShutdown() = %s\n", sock.isClosed(), sock.isInputShutdown());
                 default:
                     throw new ApiDataException(String.format("Unexpected line '%s'", line));
             }
