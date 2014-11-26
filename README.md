@@ -27,9 +27,6 @@ Previous 1.1 versions:
 * 1.1.2 added support for handling multi-line results, like for example /file print. 
 * 1.1 added TLS (SSL) support to encrypt API traffic. 
 
-The latest development version is 2.0.0 which is available using the 2.0.0 branch. 
-
-
 Getting the API
 ---------------
 
