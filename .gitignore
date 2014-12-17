@@ -16,12 +16,6 @@ nbactions.xml
 # Eclipse
 .settings/
 
-# Project 
-Mtik.java
-
-# Jekyll 
-_site/
-
 .classpath
 
 .project
