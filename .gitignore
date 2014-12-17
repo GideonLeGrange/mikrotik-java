@@ -30,6 +30,7 @@ nbactions.xml
 
 # IntelliJ
 .idea/
+*.iml
 
 # Eclipse
 .settings/
