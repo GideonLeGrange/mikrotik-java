@@ -394,16 +394,6 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return buf.toString();
         }
-            
-
-        private String unpackMultiLine(String head) throws ApiConnectionException, ApiDataException {
-            StringBuilder buf = new StringBuilder(head);
-            do {
-                nextLine();
-                buf.append(line);
-            } while (line.endsWith("\r"));
-            return buf.toString();
-        }
 
         private Done unpackDone() throws MikrotikApiException {
             Done done = new Done(null);
