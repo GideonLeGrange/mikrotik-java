@@ -10,14 +10,18 @@ Versions
 
 This library uses [semantic versioning](http://semver.org/)
 
-The current stable version is 2.0.2. 
+**The current stable version is 2.0.2.**
+
+### Changes in version 2.0.2:
 
 * Fixed bug #13 - processor thread wasn't being stopped on disconnect(), causing non-exit of application in some cases. 
 
-Previous 2.0 versions:
+### Previous 2.0 versions:
 
 * 2.0.1 fixed parsing of !=, < and > operators in a where clause. 
 * 2.0.0 changed ResultListener to receive errors and completion notifications. This version is not backwards compatible with version 1.x. 
+
+The last version 1.x release was 1.1.6 which was the first version to be pushed to Maven Central. Version 1 is considered *deprecated* and will no longer be supported or patched. 
 
 Previous 1.1 versions:
 
@@ -26,9 +30,6 @@ Previous 1.1 versions:
 * 1.1.3 fixed severe command line parsing bugs, #3, #4 and #5.
 * 1.1.2 added support for handling multi-line results, like for example /file print. 
 * 1.1 added TLS (SSL) support to encrypt API traffic. 
-
-The latest development version is 2.0.0 which is available using the 2.0.0 branch. 
-
 
 Getting the API
 ---------------
