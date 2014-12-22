@@ -164,7 +164,7 @@ public final class ApiConnectionImpl extends ApiConnection {
      */
     private void open(String host, int port, boolean secure) throws ApiConnectionException {
         try {
-            InetAddress ia = InetAddress.getByName(host);
+            InetAddress ia = InetAddress.getByName(host.trim());
             if (secure) {
                 sock = openSSLSocket(ia, port);
             } else {
