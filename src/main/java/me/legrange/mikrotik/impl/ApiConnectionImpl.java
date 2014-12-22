@@ -315,6 +315,15 @@ public final class ApiConnectionImpl extends ApiConnection {
             return !lines.isEmpty() || !reader.isEmpty();
         }
 
+        private String peekLine()  throws ApiConnectionException, ApiDataException {
+                        if (lines.isEmpty()) {
+                String block = reader.take();
+                String parts[] = block.split("\n");
+                lines.addAll(Arrays.asList(parts));
+            }
+            return lines.get(0);
+        }
+        
         private Response unpack() throws MikrotikApiException {
             if (line == null) {
                 nextLine();
@@ -345,9 +354,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     String parts[] = line.split("=", 3);
                     if (parts.length == 3) {
                         if (!parts[2].endsWith("\r")) {
-                            res.put(parts[1], parts[2]);
-                        } else {
-                            res.put(parts[1], unpackMultiLine(parts[2]));
+                            res.put(parts[1], unpackResult(parts[2]));
                         }
                     } else {
                         throw new ApiDataException(String.format("Malformed line '%s'", line));
@@ -369,6 +376,25 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return res;
         }
+        
+        private String unpackResult(String first )throws ApiConnectionException, ApiDataException {
+            StringBuilder buf = new StringBuilder(first);
+            line = null;
+
+            while (hasNextLine()) {
+                String peek = peekLine();
+                if (!(peek.startsWith("!") || peek.startsWith("=") || peek.startsWith(".tag="))) {
+                    nextLine();
+                    buf.append("\n");
+                    buf.append(line);
+                }
+                else {
+                    break;
+                }
+            }
+            return buf.toString();
+        }
+            
 
         private String unpackMultiLine(String head) throws ApiConnectionException, ApiDataException {
             StringBuilder buf = new StringBuilder(head);
