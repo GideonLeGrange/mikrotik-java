@@ -85,6 +85,9 @@ public final class ApiConnectionImpl extends ApiConnection {
      */
     @Override
     public void login(String username, String password) throws MikrotikApiException, InterruptedException {
+        if (username.trim().isEmpty()) {
+            throw new ApiConnectionException("API username cannot be empty");
+        }
         List<Map<String, String>> list = execute("/login");
         Map<String, String> res = list.get(0);
         String hash = res.get("ret");
