@@ -25,12 +25,12 @@ public abstract class ApiConnection {
      * Create a new API connection to the give device on the supplied port, using anonymous TLS for encryption.
      * @param host The host to which to connect.
      * @param port The TCP port to use.
-     * @param timeOut The connection timeout to use when opening the connection.
+     * @param timeout The connection timeout to use when opening the connection.
      * @return The ApiConnection 
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
      */
-    public static ApiConnection connectTLS(String host, int port, int timeOut) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, port, true, timeOut);
+    public static ApiConnection connectTLS(String host, int port, int timeout) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, port, true, timeout);
     }
     
 
@@ -60,12 +60,12 @@ public abstract class ApiConnection {
      * Create a new API connection to the give device on the supplied port
      * @param host The host to which to connect.
      * @param port The TCP port to use.
-     * @param timeOut The connection timeout to use when opening the connection.
+     * @param timeout The connection timeout to use when opening the connection.
      * @return The ApiConnection 
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
      */
-    public static ApiConnection connect(String host, int port, int timeOut) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, port, false, timeOut);
+    public static ApiConnection connect(String host, int port, int timeout) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, port, false, timeout);
     }
 
     /**
@@ -135,12 +135,22 @@ public abstract class ApiConnection {
     
     /** get the command timeout. The command timeout is used to time out API 
      * commands after a specific time. 
+     * 
+     * Note: This is not the same as the timeout value passed in the connect() and
+     * connectTLS() methods. This timeout is specific to synchronous commands, that 
+     * timeout is applied to opening the API socket.
+     * 
      * @return The time out in milliseconds.
      */
     public abstract int getTimeout();
 
     /** set the command timeout. The command timeout is used to time out API 
      * commands after a specific time. 
+     * 
+     * Note: This is not the same as the timeout value passed in the connect() and
+     * connectTLS() methods. This timeout is specific to synchronous commands, that 
+     * timeout is applied to opening the API socket.
+     * 
      * @param timeout The time out in milliseconds.
      * @throws MikrotikApiException Thrown if the timeout specified is invalid. 
      */
