@@ -11,6 +11,26 @@ import me.legrange.mikrotik.impl.ApiConnectionImpl;
  * @author GideonLeGrange
  */
 public abstract class ApiConnection {
+    
+    /** default TCP port used by Mikrotik API */
+    public static final int DEFAULT_PORT = 8728;
+    /** default TCP TLS port used by Mikrotik API */
+    public static final int DEFAULT_TLS_PORT = 8729;
+    /** default connection timeout to use when opening the connection */
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
+
+    /**
+     * Create a new API connection to the give device on the supplied port, using anonymous TLS for encryption.
+     * @param host The host to which to connect.
+     * @param port The TCP port to use.
+     * @param timeOut The connection timeout to use when opening the connection.
+     * @return The ApiConnection 
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
+     */
+    public static ApiConnection connectTLS(String host, int port, int timeOut) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, port, true, timeOut);
+    }
+    
 
     /**
      * Create a new API connection to the give device on the supplied port, using anonymous TLS for encryption.
@@ -34,6 +54,17 @@ public abstract class ApiConnection {
         return ApiConnectionImpl.connect(host, DEFAULT_TLS_PORT, true, DEFAULT_CONNECTION_TIMEOUT);
     }
 
+    /**
+     * Create a new API connection to the give device on the supplied port
+     * @param host The host to which to connect.
+     * @param port The TCP port to use.
+     * @param timeOut The connection timeout to use when opening the connection.
+     * @return The ApiConnection 
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
+     */
+    public static ApiConnection connect(String host, int port, int timeOut) throws MikrotikApiException {
+        return ApiConnectionImpl.connect(host, port, false, timeOut);
+    }
 
     /**
      * Create a new API connection to the give device on the supplied port
