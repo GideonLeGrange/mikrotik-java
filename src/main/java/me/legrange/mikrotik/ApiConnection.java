@@ -131,11 +131,4 @@ public abstract class ApiConnection {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem canceling the command */
     public abstract void cancel(String tag) throws MikrotikApiException;
 
-    /** default TCP port used by Mikrotik API */
-    private static final int DEFAULT_PORT = 8728;
-    /** default TCP TLS port used by Mikrotik API */
-    private static final int DEFAULT_TLS_PORT = 8729;
-    /** default connection timeout to use when opening the connection */
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
-        
 }
