@@ -12,7 +12,7 @@ This library uses [semantic versioning](http://semver.org/)
 
 **The current stable version is 2.0.3.**
 
-### Changes in version 2.0.2:
+### Changes in version 2.0.3:
 
 * Fixed bug #18 - An empty username in ```login()``` caused the API to hang. 
 
