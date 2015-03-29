@@ -36,6 +36,7 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @param host The host to which to connect.
      * @param port The TCP port to use.
      * @param secure Is TLS required
+     * @param timeOut The connection timeout
      * @return The ApiConnection
      * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
      * problem connecting
@@ -46,22 +47,11 @@ public final class ApiConnectionImpl extends ApiConnection {
         return con;
     }
 
-    /**
-     * Check the state of connection.
-     *
-     * @return if connection is established to router it returns true.
-     */
     @Override
     public boolean isConnected() {
         return connected;
     }
 
-    /**
-     * Disconnect from the remote API
-     *
-     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
-     * problem disconnecting
-     */
     @Override
     public void disconnect() throws ApiConnectionException {
         if (!connected) {
@@ -77,14 +67,6 @@ public final class ApiConnectionImpl extends ApiConnection {
         }
     }
 
-    /**
-     * Log in to the remote router.
-     *
-     * @param username - username of the user on the router
-     * @param password - password for the user
-     * @throws me.legrange.mikrotik.MikrotikApiException
-     * @throws java.lang.InterruptedException
-     */
     @Override
     public void login(String username, String password) throws MikrotikApiException, InterruptedException {
         if (username.trim().isEmpty()) {
@@ -98,47 +80,40 @@ public final class ApiConnectionImpl extends ApiConnection {
         execute("/login name=" + username + " response=00" + chal);
     }
 
-    /**
-     * execute a command and return a list of results.
-     *
-     * @param cmd Command to execute
-     * @return The list of results
-     * @throws me.legrange.mikrotik.MikrotikApiException
-     */
     @Override
     public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
-        return execute(Parser.parse(cmd));
+        return execute(Parser.parse(cmd), timeOut);
     }
 
-    /**
-     * execute a command and attach a result listener to receive it's results.
-     *
-     * @param cmd Command to execute
-     * @param lis ResultListener that will receive the results
-     * @return A command object that can be used to cancel the command.
-     * @throws MikrotikApiException
-     */
     @Override
     public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
         return execute(Parser.parse(cmd), lis);
     }
 
-    /**
-     * cancel a command
-     *
-     * @param tag
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if an error is
-     * experienced while canceling the
-     */
     @Override
     public void cancel(String tag) throws MikrotikApiException {
         execute(String.format("/cancel tag=%s", tag));
     }
 
-    private List<Map<String, String>> execute(Command cmd) throws MikrotikApiException {
+    @Override
+    public int getTimeout() {
+        return timeOut;
+    }
+
+    @Override
+    public void setTimeout(int timeout) throws MikrotikApiException {
+        if (timeout >=0) {
+            timeOut = timeout;
+        }
+        else {
+            throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive or 0", timeout));
+        }
+    }
+    
+    private List<Map<String, String>> execute(Command cmd, int timeOut) throws MikrotikApiException {
         SyncListener l = new SyncListener();
         execute(cmd, l);
-        return l.getResults();
+        return l.getResults(timeOut);
     }
 
     private String execute(Command cmd, ResultListener lis) throws MikrotikApiException {
@@ -226,6 +201,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     private Processor processor;
     private final Map<String, ResultListener> listeners;
     private Integer _tag = 0;
+    private int timeOut = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
 
     /**
      * thread to read data from the socket and process it into Strings
@@ -483,6 +459,7 @@ public final class ApiConnectionImpl extends ApiConnection {
 
         @Override
         public synchronized void completed() {
+            complete = true;
             notify();
         }
 
@@ -492,6 +469,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 res.put("ret", done.getHash());
                 results.add(res);
             }
+            complete = true;
             notify();
         }
 
@@ -500,11 +478,17 @@ public final class ApiConnectionImpl extends ApiConnection {
             results.add(result);
         }
 
-        private List<Map<String, String>> getResults() throws MikrotikApiException {
+        private List<Map<String, String>> getResults(int timeOut) throws MikrotikApiException {
             try {
                 synchronized (this) { // don't wait if we already have a result.
-                    if ((err == null) && results.isEmpty()) {
-                        wait();
+                    int waitTime = timeOut;
+                    while (!complete && (waitTime > 0)) {
+                        long start = System.currentTimeMillis();
+                        wait(waitTime);
+                        waitTime = waitTime - (int)(System.currentTimeMillis() - start);
+                        if ((waitTime < 0) && !complete) {
+                            err = new ApiConnectionException(String.format("Command timed out after %d ms", timeOut));
+                        }
                     }
                 }
             } catch (InterruptedException ex) {
@@ -515,7 +499,9 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return results;
         }
+
         private final List<Map<String, String>> results = new LinkedList<>();
         private MikrotikApiException err;
+        private boolean complete = false;
     }
 }

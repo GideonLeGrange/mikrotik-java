@@ -18,7 +18,9 @@ public abstract class ApiConnection {
     public static final int DEFAULT_TLS_PORT = 8729;
     /** default connection timeout to use when opening the connection */
     public static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
-
+    /** default command timeout used for synchronous commands */
+    public static final int DEFAULT_COMMAND_TIMEOUT = 60000;
+    
     /**
      * Create a new API connection to the give device on the supplied port, using anonymous TLS for encryption.
      * @param host The host to which to connect.
@@ -130,5 +132,18 @@ public abstract class ApiConnection {
      * @param tag The tag of the command to cancel
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem canceling the command */
     public abstract void cancel(String tag) throws MikrotikApiException;
+    
+    /** get the command timeout. The command timeout is used to time out API 
+     * commands after a specific time. 
+     * @return The time out in milliseconds.
+     */
+    public abstract int getTimeout();
+
+    /** set the command timeout. The command timeout is used to time out API 
+     * commands after a specific time. 
+     * @param timeout The time out in milliseconds.
+     * @throws MikrotikApiException Thrown if the timeout specified is invalid. 
+     */
+    public abstract void setTimeout(int timeout) throws MikrotikApiException;
 
 }
