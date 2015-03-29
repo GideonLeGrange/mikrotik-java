@@ -82,7 +82,7 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     @Override
     public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
-        return execute(Parser.parse(cmd), timeOut);
+        return execute(Parser.parse(cmd), timeout);
     }
 
     @Override
@@ -97,23 +97,23 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     @Override
     public int getTimeout() {
-        return timeOut;
+        return timeout;
     }
 
     @Override
     public void setTimeout(int timeout) throws MikrotikApiException {
-        if (timeout >=0) {
-            timeOut = timeout;
+        if (timeout > 0) {
+            this.timeout = timeout;
         }
         else {
-            throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive or 0", timeout));
+            throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive", timeout));
         }
     }
     
-    private List<Map<String, String>> execute(Command cmd, int timeOut) throws MikrotikApiException {
+    private List<Map<String, String>> execute(Command cmd, int timeout) throws MikrotikApiException {
         SyncListener l = new SyncListener();
         execute(cmd, l);
-        return l.getResults(timeOut);
+        return l.getResults(timeout);
     }
 
     private String execute(Command cmd, ResultListener lis) throws MikrotikApiException {
@@ -201,7 +201,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     private Processor processor;
     private final Map<String, ResultListener> listeners;
     private Integer _tag = 0;
-    private int timeOut = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
+    private int timeout = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
 
     /**
      * thread to read data from the socket and process it into Strings
@@ -478,16 +478,16 @@ public final class ApiConnectionImpl extends ApiConnection {
             results.add(result);
         }
 
-        private List<Map<String, String>> getResults(int timeOut) throws MikrotikApiException {
+        private List<Map<String, String>> getResults(int timeout) throws MikrotikApiException {
             try {
                 synchronized (this) { // don't wait if we already have a result.
-                    int waitTime = timeOut;
+                    int waitTime = timeout;
                     while (!complete && (waitTime > 0)) {
                         long start = System.currentTimeMillis();
                         wait(waitTime);
                         waitTime = waitTime - (int)(System.currentTimeMillis() - start);
-                        if ((waitTime < 0) && !complete) {
-                            err = new ApiConnectionException(String.format("Command timed out after %d ms", timeOut));
+                        if ((waitTime <= 0) && !complete) {
+                            err = new ApiConnectionException(String.format("Command timed out after %d ms", timeout));
                         }
                     }
                 }
