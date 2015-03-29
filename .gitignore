@@ -19,3 +19,6 @@ nbactions.xml
 .classpath
 
 .project
+
+# Maven 
+pom.xml.versionsBackup

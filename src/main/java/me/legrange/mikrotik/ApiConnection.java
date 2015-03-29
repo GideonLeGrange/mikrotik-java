@@ -20,7 +20,7 @@ public abstract class ApiConnection {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
      */
     public static ApiConnection connectTLS(String host, int port) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, port, true);
+        return ApiConnectionImpl.connect(host, port, true, DEFAULT_CONNECTION_TIMEOUT);
     }
     
     
@@ -31,7 +31,7 @@ public abstract class ApiConnection {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
      */
     public static ApiConnection connectTLS(String host) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, DEFAULT_TLS_PORT, true);
+        return ApiConnectionImpl.connect(host, DEFAULT_TLS_PORT, true, DEFAULT_CONNECTION_TIMEOUT);
     }
 
 
@@ -43,7 +43,7 @@ public abstract class ApiConnection {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
      */
     public static ApiConnection connect(String host, int port) throws MikrotikApiException {
-        return ApiConnectionImpl.connect(host, port, false);
+        return ApiConnectionImpl.connect(host, port, false, DEFAULT_CONNECTION_TIMEOUT);
     }
 
     /**
@@ -104,5 +104,7 @@ public abstract class ApiConnection {
     private static final int DEFAULT_PORT = 8728;
     /** default TCP TLS port used by Mikrotik API */
     private static final int DEFAULT_TLS_PORT = 8729;
+    /** default connection timeout to use when opening the connection */
+    private static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
         
 }

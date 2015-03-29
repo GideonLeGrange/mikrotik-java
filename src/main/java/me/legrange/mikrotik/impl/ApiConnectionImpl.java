@@ -5,7 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,9 +40,9 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
      * problem connecting
      */
-    public static ApiConnection connect(String host, int port, boolean secure) throws ApiConnectionException {
+    public static ApiConnection connect(String host, int port, boolean secure, int timeOut) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
-        con.open(host, port, secure);
+        con.open(host, port, secure, timeOut);
         return con;
     }
 
@@ -123,8 +125,10 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     /**
      * cancel a command
+     *
      * @param tag
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if an error is experienced while canceling the 
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if an error is
+     * experienced while canceling the
      */
     @Override
     public void cancel(String tag) throws MikrotikApiException {
@@ -156,22 +160,15 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     /**
-     * Start the API. Connects to the Mikrotik without using encryption
-     */
-    private void open(String host, int port) throws ApiConnectionException {
-        open(host, port, false);
-    }
-
-    /**
      * Start the API. Connects to the Mikrotik
      */
-    private void open(String host, int port, boolean secure) throws ApiConnectionException {
+    private void open(String host, int port, boolean secure, int conTimeout) throws ApiConnectionException {
         try {
             InetAddress ia = InetAddress.getByName(host.trim());
             if (secure) {
-                sock = openSSLSocket(ia, port);
+                sock = openSSLSocket(ia, port, conTimeout);
             } else {
-                sock = new Socket(ia, port);
+                sock = openClearSocket(ia, port, conTimeout);
             }
             in = new DataInputStream(sock.getInputStream());
             out = new DataOutputStream(sock.getOutputStream());
@@ -191,11 +188,19 @@ public final class ApiConnectionImpl extends ApiConnection {
         }
     }
 
+    private Socket openClearSocket(InetAddress ia, int port, int timeOut) throws IOException {
+        Socket clear = new Socket();
+        SocketAddress addr = new InetSocketAddress(ia, port);
+        clear.connect(new InetSocketAddress(ia, port), timeOut);
+       return clear;
+    }
+
     /**
      * open and configure a SSL socket.
      */
-    private Socket openSSLSocket(InetAddress ia, int port) throws IOException {
-        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket(ia, port);
+    private Socket openSSLSocket(InetAddress ia, int port, int timeOut) throws IOException {
+        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
+        ssl.connect(new InetSocketAddress(ia, port), timeOut);
         List<String> cs = new LinkedList<>();
         // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
         // caused by a "SSL peer shut down incorrectly" error
@@ -212,7 +217,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         _tag++;
         return Integer.toHexString(_tag);
     }
-    private static final int DEFAULT_PORT = 8728;
+
     private Socket sock = null;
     private DataOutputStream out = null;
     private DataInputStream in = null;
@@ -318,15 +323,15 @@ public final class ApiConnectionImpl extends ApiConnection {
             return !lines.isEmpty() || !reader.isEmpty();
         }
 
-        private String peekLine()  throws ApiConnectionException, ApiDataException {
-                        if (lines.isEmpty()) {
+        private String peekLine() throws ApiConnectionException, ApiDataException {
+            if (lines.isEmpty()) {
                 String block = reader.take();
                 String parts[] = block.split("\n");
                 lines.addAll(Arrays.asList(parts));
             }
             return lines.get(0);
         }
-        
+
         private Response unpack() throws MikrotikApiException {
             if (line == null) {
                 nextLine();
@@ -340,7 +345,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     return unpackError();
                 case "!halt":
                     return unpackError();
-                case "" : 
+                case "":
                     System.out.printf("sock.isClosed() = %s, sock.isInputShutdown() = %s\n", sock.isClosed(), sock.isInputShutdown());
                 default:
                     throw new ApiDataException(String.format("Unexpected line '%s'", line));
@@ -379,8 +384,8 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return res;
         }
-        
-        private String unpackResult(String first )throws ApiConnectionException, ApiDataException {
+
+        private String unpackResult(String first) throws ApiConnectionException, ApiDataException {
             StringBuilder buf = new StringBuilder(first);
             line = null;
 
@@ -390,8 +395,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     nextLine();
                     buf.append("\n");
                     buf.append(line);
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -498,7 +502,7 @@ public final class ApiConnectionImpl extends ApiConnection {
 
         private List<Map<String, String>> getResults() throws MikrotikApiException {
             try {
-                synchronized (this) { // don't wait if we already have a result. 
+                synchronized (this) { // don't wait if we already have a result.
                     if ((err == null) && results.isEmpty()) {
                         wait();
                     }
