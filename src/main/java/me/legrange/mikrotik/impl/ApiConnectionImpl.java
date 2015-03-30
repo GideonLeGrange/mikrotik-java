@@ -98,11 +98,6 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     @Override
-    public int getTimeout() {
-        return timeout;
-    }
-
-    @Override
     public void setTimeout(int timeout) throws MikrotikApiException {
         if (timeout > 0) {
             this.timeout = timeout;

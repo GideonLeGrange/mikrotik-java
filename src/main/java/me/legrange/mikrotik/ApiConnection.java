@@ -133,16 +133,6 @@ public abstract class ApiConnection {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem canceling the command */
     public abstract void cancel(String tag) throws MikrotikApiException;
     
-    /** get the command timeout. The command timeout is used to time out API 
-     * commands after a specific time. 
-     * 
-     * Note: This is not the same as the timeout value passed in the connect() and
-     * connectTLS() methods. This timeout is specific to synchronous commands, that 
-     * timeout is applied to opening the API socket.
-     * 
-     * @return The time out in milliseconds.
-     */
-    public abstract int getTimeout();
 
     /** set the command timeout. The command timeout is used to time out API 
      * commands after a specific time. 
