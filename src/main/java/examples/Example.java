@@ -9,7 +9,7 @@ import me.legrange.mikrotik.ApiConnection;
  abstract class Example {
      
     protected void connect() throws Exception {
-        con = ApiConnection.connect(Config.HOST);
+        con = ApiConnection.connect(Config.HOST, ApiConnection.DEFAULT_PORT, 2000);
         con.login(Config.USERNAME, Config.PASSWORD);
     }
 
