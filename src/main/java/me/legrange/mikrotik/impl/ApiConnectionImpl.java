@@ -61,6 +61,8 @@ public final class ApiConnectionImpl extends ApiConnection {
         processor.interrupt();
         reader.interrupt();
         try {
+            in.close();
+            out.close();
             sock.close();
         } catch (IOException ex) {
             throw new ApiConnectionException(String.format("Error closing socket: %s", ex.getMessage()), ex);
@@ -322,7 +324,6 @@ public final class ApiConnectionImpl extends ApiConnection {
                 case "!halt":
                     return unpackError();
                 case "":
-                    System.out.printf("sock.isClosed() = %s, sock.isInputShutdown() = %s\n", sock.isClosed(), sock.isInputShutdown());
                 default:
                     throw new ApiDataException(String.format("Unexpected line '%s'", line));
             }
