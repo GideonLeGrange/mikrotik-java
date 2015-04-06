@@ -8,7 +8,7 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 This library uses [semantic versioning](http://semver.org/)
 
-**The current stable version is 2.0.3.**
+**The current stable version is 2.1**
 
 ### Changes in version 2.1:
 
