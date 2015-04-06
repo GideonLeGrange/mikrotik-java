@@ -10,19 +10,20 @@ This library uses [semantic versioning](http://semver.org/)
 
 **The current stable version is 2.0.3.**
 
-### Changes in version 2.0.2:
+### Changes in version 2.1:
 
-* Fixed bug #18 - An empty username in ```login()``` caused the API to hang. 
+Version 2.1 adds the ability to use connection and command timeouts as requested by users. To see how to use these, please refer to the examples below. For more information, look at issue [#16](https://github.com/GideonLeGrange/mikrotik-java/issues/16). 
 
-### Previous 2.0 versions:
+#### Previous 2.0 versions:
 
+* 2.0.3 Fixed bug #18 - An empty username in ```login()``` caused the API to hang. 
 * 2.0.2 Fixed bug #13 - processor thread wasn't being stopped on disconnect(), causing non-exit of application in some cases. 
 * 2.0.1 fixed parsing of !=, < and > operators in a where clause. 
 * 2.0.0 changed ResultListener to receive errors and completion notifications. This version is not backwards compatible with version 1.x. 
 
 The last version 1.x release was 1.1.6 which was the first version to be pushed to Maven Central. Version 1 is considered *deprecated* and will no longer be supported or patched. 
 
-Previous 1.1 versions:
+#### Previous 1.1 versions:
 
 * 1.1.5 fixed even more comamnd line parsing bugs.
 * 1.1.4 fixed command line parsing bugs #7 and #8.
