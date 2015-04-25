@@ -1,5 +1,6 @@
 package me.legrange.mikrotik;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import me.legrange.mikrotik.impl.ApiConnectionImpl;
@@ -9,8 +10,9 @@ import me.legrange.mikrotik.impl.ApiConnectionImpl;
  * Mikrotik and send commands to it.
  *
  * @author GideonLeGrange
+ * @author clairtonluz
  */
-public abstract class ApiConnection {
+public abstract class ApiConnection implements Closeable {
     
     /** default TCP port used by Mikrotik API */
     public static final int DEFAULT_PORT = 8728;

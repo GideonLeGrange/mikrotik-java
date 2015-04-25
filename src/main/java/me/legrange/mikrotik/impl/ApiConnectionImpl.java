@@ -200,6 +200,15 @@ public final class ApiConnectionImpl extends ApiConnection {
     private Integer _tag = 0;
     private int timeout = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
 
+    @Override
+    public void close() throws IOException {
+        try {
+            disconnect();
+        } catch (ApiConnectionException e) {
+            throw new IOException(e.getMessage(), e.getCause());
+        }
+    }
+
     /**
      * thread to read data from the socket and process it into Strings
      */
