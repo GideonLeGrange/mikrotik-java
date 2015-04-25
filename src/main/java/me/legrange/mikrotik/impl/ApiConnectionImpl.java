@@ -5,7 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -34,32 +36,22 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @param host The host to which to connect.
      * @param port The TCP port to use.
      * @param secure Is TLS required
+     * @param timeOut The connection timeout
      * @return The ApiConnection
      * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
      * problem connecting
      */
-    public static ApiConnection connect(String host, int port, boolean secure) throws ApiConnectionException {
+    public static ApiConnection connect(String host, int port, boolean secure, int timeOut) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
-        con.open(host, port, secure);
+        con.open(host, port, secure, timeOut);
         return con;
     }
 
-    /**
-     * Check the state of connection.
-     *
-     * @return if connection is established to router it returns true.
-     */
     @Override
     public boolean isConnected() {
         return connected;
     }
 
-    /**
-     * Disconnect from the remote API
-     *
-     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
-     * problem disconnecting
-     */
     @Override
     public void disconnect() throws ApiConnectionException {
         if (!connected) {
@@ -69,22 +61,19 @@ public final class ApiConnectionImpl extends ApiConnection {
         processor.interrupt();
         reader.interrupt();
         try {
+            in.close();
+            out.close();
             sock.close();
         } catch (IOException ex) {
             throw new ApiConnectionException(String.format("Error closing socket: %s", ex.getMessage()), ex);
         }
     }
 
-    /**
-     * Log in to the remote router.
-     *
-     * @param username - username of the user on the router
-     * @param password - password for the user
-     * @throws me.legrange.mikrotik.MikrotikApiException
-     * @throws java.lang.InterruptedException
-     */
     @Override
     public void login(String username, String password) throws MikrotikApiException, InterruptedException {
+        if (username.trim().isEmpty()) {
+            throw new ApiConnectionException("API username cannot be empty");
+        }
         List<Map<String, String>> list = execute("/login");
         Map<String, String> res = list.get(0);
         String hash = res.get("ret");
@@ -93,45 +82,35 @@ public final class ApiConnectionImpl extends ApiConnection {
         execute("/login name=" + username + " response=00" + chal);
     }
 
-    /**
-     * execute a command and return a list of results.
-     *
-     * @param cmd Command to execute
-     * @return The list of results
-     * @throws me.legrange.mikrotik.MikrotikApiException
-     */
     @Override
     public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
-        return execute(Parser.parse(cmd));
+        return execute(Parser.parse(cmd), timeout);
     }
 
-    /**
-     * execute a command and attach a result listener to receive it's results.
-     *
-     * @param cmd Command to execute
-     * @param lis ResultListener that will receive the results
-     * @return A command object that can be used to cancel the command.
-     * @throws MikrotikApiException
-     */
     @Override
     public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
         return execute(Parser.parse(cmd), lis);
     }
 
-    /**
-     * cancel a command
-     * @param tag
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if an error is experienced while canceling the 
-     */
     @Override
     public void cancel(String tag) throws MikrotikApiException {
         execute(String.format("/cancel tag=%s", tag));
     }
 
-    private List<Map<String, String>> execute(Command cmd) throws MikrotikApiException {
+    @Override
+    public void setTimeout(int timeout) throws MikrotikApiException {
+        if (timeout > 0) {
+            this.timeout = timeout;
+        }
+        else {
+            throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive", timeout));
+        }
+    }
+    
+    private List<Map<String, String>> execute(Command cmd, int timeout) throws MikrotikApiException {
         SyncListener l = new SyncListener();
         execute(cmd, l);
-        return l.getResults();
+        return l.getResults(timeout);
     }
 
     private String execute(Command cmd, ResultListener lis) throws MikrotikApiException {
@@ -153,22 +132,15 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     /**
-     * Start the API. Connects to the Mikrotik without using encryption
-     */
-    private void open(String host, int port) throws ApiConnectionException {
-        open(host, port, false);
-    }
-
-    /**
      * Start the API. Connects to the Mikrotik
      */
-    private void open(String host, int port, boolean secure) throws ApiConnectionException {
+    private void open(String host, int port, boolean secure, int conTimeout) throws ApiConnectionException {
         try {
             InetAddress ia = InetAddress.getByName(host.trim());
             if (secure) {
-                sock = openSSLSocket(ia, port);
+                sock = openSSLSocket(ia, port, conTimeout);
             } else {
-                sock = new Socket(ia, port);
+                sock = openClearSocket(ia, port, conTimeout);
             }
             in = new DataInputStream(sock.getInputStream());
             out = new DataOutputStream(sock.getOutputStream());
@@ -188,11 +160,19 @@ public final class ApiConnectionImpl extends ApiConnection {
         }
     }
 
+    private Socket openClearSocket(InetAddress ia, int port, int timeOut) throws IOException {
+        Socket clear = new Socket();
+        SocketAddress addr = new InetSocketAddress(ia, port);
+        clear.connect(new InetSocketAddress(ia, port), timeOut);
+       return clear;
+    }
+
     /**
      * open and configure a SSL socket.
      */
-    private Socket openSSLSocket(InetAddress ia, int port) throws IOException {
-        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket(ia, port);
+    private Socket openSSLSocket(InetAddress ia, int port, int timeOut) throws IOException {
+        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
+        ssl.connect(new InetSocketAddress(ia, port), timeOut);
         List<String> cs = new LinkedList<>();
         // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
         // caused by a "SSL peer shut down incorrectly" error
@@ -209,7 +189,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         _tag++;
         return Integer.toHexString(_tag);
     }
-    private static final int DEFAULT_PORT = 8728;
+
     private Socket sock = null;
     private DataOutputStream out = null;
     private DataInputStream in = null;
@@ -218,6 +198,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     private Processor processor;
     private final Map<String, ResultListener> listeners;
     private Integer _tag = 0;
+    private int timeout = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
 
     /**
      * thread to read data from the socket and process it into Strings
@@ -315,15 +296,15 @@ public final class ApiConnectionImpl extends ApiConnection {
             return !lines.isEmpty() || !reader.isEmpty();
         }
 
-        private String peekLine()  throws ApiConnectionException, ApiDataException {
-                        if (lines.isEmpty()) {
+        private String peekLine() throws ApiConnectionException, ApiDataException {
+            if (lines.isEmpty()) {
                 String block = reader.take();
                 String parts[] = block.split("\n");
                 lines.addAll(Arrays.asList(parts));
             }
             return lines.get(0);
         }
-        
+
         private Response unpack() throws MikrotikApiException {
             if (line == null) {
                 nextLine();
@@ -337,8 +318,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     return unpackError();
                 case "!halt":
                     return unpackError();
-                case "" : 
-                    System.out.printf("sock.isClosed() = %s, sock.isInputShutdown() = %s\n", sock.isClosed(), sock.isInputShutdown());
+                case "":
                 default:
                     throw new ApiDataException(String.format("Unexpected line '%s'", line));
             }
@@ -376,8 +356,8 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return res;
         }
-        
-        private String unpackResult(String first )throws ApiConnectionException, ApiDataException {
+
+        private String unpackResult(String first) throws ApiConnectionException, ApiDataException {
             StringBuilder buf = new StringBuilder(first);
             line = null;
 
@@ -387,8 +367,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     nextLine();
                     buf.append("\n");
                     buf.append(line);
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -476,6 +455,7 @@ public final class ApiConnectionImpl extends ApiConnection {
 
         @Override
         public synchronized void completed() {
+            complete = true;
             notify();
         }
 
@@ -485,6 +465,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 res.put("ret", done.getHash());
                 results.add(res);
             }
+            complete = true;
             notify();
         }
 
@@ -493,11 +474,17 @@ public final class ApiConnectionImpl extends ApiConnection {
             results.add(result);
         }
 
-        private List<Map<String, String>> getResults() throws MikrotikApiException {
+        private List<Map<String, String>> getResults(int timeout) throws MikrotikApiException {
             try {
-                synchronized (this) { // don't wait if we already have a result. 
-                    if ((err == null) && results.isEmpty()) {
-                        wait();
+                synchronized (this) { // don't wait if we already have a result.
+                    int waitTime = timeout;
+                    while (!complete && (waitTime > 0)) {
+                        long start = System.currentTimeMillis();
+                        wait(waitTime);
+                        waitTime = waitTime - (int)(System.currentTimeMillis() - start);
+                        if ((waitTime <= 0) && !complete) {
+                            err = new ApiConnectionException(String.format("Command timed out after %d ms", timeout));
+                        }
                     }
                 }
             } catch (InterruptedException ex) {
@@ -508,7 +495,9 @@ public final class ApiConnectionImpl extends ApiConnection {
             }
             return results;
         }
+
         private final List<Map<String, String>> results = new LinkedList<>();
         private MikrotikApiException err;
+        private boolean complete = false;
     }
 }
