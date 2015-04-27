@@ -201,12 +201,8 @@ public final class ApiConnectionImpl extends ApiConnection {
     private int timeout = ApiConnection.DEFAULT_COMMAND_TIMEOUT;
 
     @Override
-    public void close() throws IOException {
-        try {
-            disconnect();
-        } catch (ApiConnectionException e) {
-            throw new IOException(e.getMessage(), e.getCause());
-        }
+    public void close() throws ApiConnectionException {
+        disconnect();
     }
 
     /**
