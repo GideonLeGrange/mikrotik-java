@@ -28,6 +28,7 @@ public abstract class ApiConnection implements AutoCloseable {
      * @param timeout The connection timeout to use when opening the connection.
      * @return The ApiConnection 
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
+     * @since 2.1
      */
     public static ApiConnection connectTLS(String host, int port, int timeout) throws MikrotikApiException {
         return ApiConnectionImpl.connect(host, port, true, timeout);
@@ -63,6 +64,7 @@ public abstract class ApiConnection implements AutoCloseable {
      * @param timeout The connection timeout to use when opening the connection.
      * @return The ApiConnection 
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem connecting
+     * @since 2.1
      */
     public static ApiConnection connect(String host, int port, int timeout) throws MikrotikApiException {
         return ApiConnectionImpl.connect(host, port, false, timeout);
@@ -97,9 +99,9 @@ public abstract class ApiConnection implements AutoCloseable {
     public abstract boolean isConnected();
 
     /**
-     * Disconnect from the remote API
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem disconnecting
+     * @deprecated Replaced by close() which conforms to AutoCloseable
      */
+    @Deprecated
     public abstract void disconnect() throws MikrotikApiException; 
 
     /**
@@ -143,9 +145,15 @@ public abstract class ApiConnection implements AutoCloseable {
      * 
      * @param timeout The time out in milliseconds.
      * @throws MikrotikApiException Thrown if the timeout specified is invalid. 
+     * @since 2.1
      */
     public abstract void setTimeout(int timeout) throws MikrotikApiException;
 
+    /** 
+     * Disconnect from the remote API
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem disconnecting
+     * @since 2.2
+    */
     @Override
     public abstract void close() throws ApiConnectionException;
     
