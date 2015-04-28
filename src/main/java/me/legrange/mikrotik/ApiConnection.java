@@ -10,7 +10,7 @@ import me.legrange.mikrotik.impl.ApiConnectionImpl;
  *
  * @author GideonLeGrange
  */
-public abstract class ApiConnection {
+public abstract class ApiConnection implements AutoCloseable {
     
     /** default TCP port used by Mikrotik API */
     public static final int DEFAULT_PORT = 8728;
@@ -145,5 +145,9 @@ public abstract class ApiConnection {
      * @throws MikrotikApiException Thrown if the timeout specified is invalid. 
      */
     public abstract void setTimeout(int timeout) throws MikrotikApiException;
+
+    @Override
+    public abstract void close() throws ApiConnectionException;
+    
 
 }

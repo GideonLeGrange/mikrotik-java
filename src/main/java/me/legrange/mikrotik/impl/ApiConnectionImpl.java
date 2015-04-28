@@ -54,19 +54,7 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     @Override
     public void disconnect() throws ApiConnectionException {
-        if (!connected) {
-            throw new ApiConnectionException(("Not/no longer connected to remote Mikrotik"));
-        }
-        connected = false;
-        processor.interrupt();
-        reader.interrupt();
-        try {
-            in.close();
-            out.close();
-            sock.close();
-        } catch (IOException ex) {
-            throw new ApiConnectionException(String.format("Error closing socket: %s", ex.getMessage()), ex);
-        }
+        close();
     }
 
     @Override
@@ -101,12 +89,28 @@ public final class ApiConnectionImpl extends ApiConnection {
     public void setTimeout(int timeout) throws MikrotikApiException {
         if (timeout > 0) {
             this.timeout = timeout;
-        }
-        else {
+        } else {
             throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive", timeout));
         }
     }
-    
+
+    @Override
+    public void close() throws ApiConnectionException {
+        if (!connected) {
+            throw new ApiConnectionException(("Not/no longer connected to remote Mikrotik"));
+        }
+        connected = false;
+        processor.interrupt();
+        reader.interrupt();
+        try {
+            in.close();
+            out.close();
+            sock.close();
+        } catch (IOException ex) {
+            throw new ApiConnectionException(String.format("Error closing socket: %s", ex.getMessage()), ex);
+        }
+    }
+
     private List<Map<String, String>> execute(Command cmd, int timeout) throws MikrotikApiException {
         SyncListener l = new SyncListener();
         execute(cmd, l);
@@ -164,7 +168,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         Socket clear = new Socket();
         SocketAddress addr = new InetSocketAddress(ia, port);
         clear.connect(new InetSocketAddress(ia, port), timeOut);
-       return clear;
+        return clear;
     }
 
     /**
@@ -481,7 +485,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     while (!complete && (waitTime > 0)) {
                         long start = System.currentTimeMillis();
                         wait(waitTime);
-                        waitTime = waitTime - (int)(System.currentTimeMillis() - start);
+                        waitTime = waitTime - (int) (System.currentTimeMillis() - start);
                         if ((waitTime <= 0) && !complete) {
                             err = new ApiConnectionException(String.format("Command timed out after %d ms", timeout));
                         }
