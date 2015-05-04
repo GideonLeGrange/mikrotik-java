@@ -84,7 +84,7 @@ By default, the API will generate an exception if it cannot connect to the speci
 Connecting using TLS is similar:
 
 ```java
-   ApiConnection con = ApiConnection.connect("10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, 2000); // connect to router on the default TLS API port and fail in 2 seconds
+   ApiConnection con = ApiConnection.connectTLS("10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, 2000); // connect to router on the default TLS API port and fail in 2 seconds
 ```
 
 Note that ```ApiConnection.DEFAULT_PORT``` and ```ApiConnection.DEFAULT_TLS_PORT``` are provided to allow users who use the default ports to safely use the overloaded timeout method.
