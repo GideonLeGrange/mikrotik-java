@@ -6,15 +6,17 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
+**The current stable version is 2.2**
+
 This library uses [semantic versioning](http://semver.org/)
 
-**The current stable version is 2.1**
+### Changes in version 2.2:
 
-### Changes in version 2.1:
+Version 2.2 implements AutoCloseable on ApiConnection to support Java 7's try-with-resources statement.
 
-Version 2.1 adds the ability to use connection and command timeouts as requested by users. To see how to use these, please refer to the examples below. For more information, look at issue [#16](https://github.com/GideonLeGrange/mikrotik-java/issues/16). 
+#### Previous 2.x versions:
 
-#### Previous 2.0 versions:
+* 2.1 added the ability to use connection and command timeouts as.
 
 * 2.0.3 Fixed bug #18 - An empty username in ```login()``` caused the API to hang. 
 * 2.0.2 Fixed bug #13 - processor thread wasn't being stopped on disconnect(), causing non-exit of application in some cases. 
