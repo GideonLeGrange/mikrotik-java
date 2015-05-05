@@ -99,6 +99,7 @@ public abstract class ApiConnection implements AutoCloseable {
     public abstract boolean isConnected();
 
     /**
+     * @throws me.legrange.mikrotik.MikrotikApiException
      * @deprecated Replaced by close() which conforms to AutoCloseable
      */
     @Deprecated
@@ -151,7 +152,7 @@ public abstract class ApiConnection implements AutoCloseable {
 
     /** 
      * Disconnect from the remote API
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a problem disconnecting
+     * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a problem closing the connection.
      * @since 2.2
     */
     @Override
