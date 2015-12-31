@@ -6,10 +6,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  * Example 1: A very simple command: Reboot the remote router
  * @author gideon
  */
-public class Example1 extends Example {
+public class SimpleCommand extends Example {
     
         public static void main(String...args) throws Exception {
-            Example1 ex = new Example1();
+            SimpleCommand ex = new SimpleCommand();
             ex.connect();
             ex.test();
             ex.disconnect();

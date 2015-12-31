@@ -1,7 +1,5 @@
 package examples;
 
-import java.util.List;
-import java.util.Map;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.MikrotikApiException;
 
@@ -10,10 +8,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class Example9  {
+public class TryWithResources  {
 
     public static void main(String... args) throws Exception {
-        Example9 ex = new Example9();
+        TryWithResources ex = new TryWithResources();
         ex.test();
     }
 

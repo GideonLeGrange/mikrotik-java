@@ -5,44 +5,48 @@ import me.legrange.mikrotik.MikrotikApiException;
 import me.legrange.mikrotik.ResultListener;
 
 /**
- * Example 4: Asynchronous results. Run a command and receive results for it asynchronously with a ResultListener
+ * Example 5: Asynchronous results, with error and completion. Run a command and receive results, errors and completion notification for it asynchronously with a ResponseListener
  *
  * @author gideon
  */
-public class Example4 extends Example {
+public class AsyncWithErrorHandling extends Example {
 
     public static void main(String... args) throws Exception {
-        Example4 ex = new Example4();
+        AsyncWithErrorHandling ex = new AsyncWithErrorHandling();
         ex.connect();
         ex.test();
         ex.disconnect();
     }
 
     private void test() throws MikrotikApiException, InterruptedException {
-       String id = con.execute("/interface/wireless/monitor .id=wlan1 .proplist=signal-strength", new ResultListener() {
+        boolean completed = false;
+       String id = con.execute("/interface/wireless/monitor .id=wlan1", new ResultListener() {
            private int prev = 0;
 
+           @Override
            public void receive(Map<String, String> result) {
-               System.out.println(result);
-/*               int val = Integer.parseInt(result.get("signal-strength"));
+               int val = Integer.parseInt(result.get("signal-strength"));
                String sym = (val == prev) ? " " : ((val < prev) ? "-" : "+");
                System.out.printf("%d %s\n", val, sym);
                prev = val;
-  */          }
+           }
 
            @Override
            public void error(MikrotikApiException ex) {
-               throw new RuntimeException(ex.getMessage(), ex);
+               System.out.printf("An error ocurred: %s\n", ex.getMessage());
+               ex.printStackTrace();
            }
 
            @Override
            public void completed() {
+               System.out.printf("The request has been completed\n");
            }
 
 
         });
        // let it run for 60 seconds 
-       Thread.sleep(60000);
+       Thread.sleep(10000);
        con.cancel(id);
+       Thread.sleep(2000);
     }
 }

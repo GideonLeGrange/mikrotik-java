@@ -242,6 +242,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                     } catch (InterruptedException ex2) {
                     }
                 } catch (ApiConnectionException | InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         }

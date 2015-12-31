@@ -9,10 +9,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class Example3 extends Example {
+public class CommandWithWhere extends Example {
 
     public static void main(String... args) throws Exception {
-        Example3 ex = new Example3();
+        CommandWithWhere ex = new CommandWithWhere();
         ex.connect();
         ex.test();
         ex.disconnect();

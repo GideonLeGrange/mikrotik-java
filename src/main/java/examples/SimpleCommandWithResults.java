@@ -9,10 +9,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class Example2 extends Example {
+public class SimpleCommandWithResults extends Example {
 
     public static void main(String... args) throws Exception {
-        Example2 ex = new Example2();
+        SimpleCommandWithResults ex = new SimpleCommandWithResults();
         ex.connect();
         ex.test();
         ex.disconnect();

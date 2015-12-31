@@ -7,10 +7,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class Example6 extends Example {
+public class AddAndModify extends Example {
 
     public static void main(String... args) throws Exception {
-        Example6 ex = new Example6();
+        AddAndModify ex = new AddAndModify();
         ex.connect();
         ex.test();
         ex.disconnect();

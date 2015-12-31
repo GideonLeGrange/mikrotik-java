@@ -9,10 +9,10 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class Example7 extends Example {
+public class DownloadConfig extends Example {
 
     public static void main(String... args) throws Exception {
-        Example7 ex = new Example7();
+        DownloadConfig ex = new DownloadConfig();
         ex.connect();
         ex.test();
         ex.disconnect();
