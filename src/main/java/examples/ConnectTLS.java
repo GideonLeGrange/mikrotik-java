@@ -16,7 +16,9 @@
 
 package examples;
 
+import java.net.Socket;
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.MikrotikApiException;
@@ -40,10 +42,8 @@ public class ConnectTLS {
     }
 
     protected void connect() throws Exception {
-        SocketFactory fact = SSLSocketFactory.getDefault();
-        
-        con = ApiConnection.connect(fact, Config.HOST, ApiConnection.DEFAULT_TLS_PORT, 2000);
-        con.login(Config.USERNAME, Config.PASSWORD);
+        SSLSocketFactory fact = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        SSLSocket sock = (SSLSocket) fact.createSocket();
     }
 
     protected void disconnect() throws Exception {
