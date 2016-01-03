@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -15,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.SocketFactory;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.ApiConnectionException;
 import me.legrange.mikrotik.MikrotikApiException;
@@ -41,20 +39,15 @@ public final class ApiConnectionImpl extends ApiConnection {
      * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
      * problem connecting
      */
-    public static ApiConnection connect(String host, int port, boolean secure, int timeOut) throws ApiConnectionException {
+    public static ApiConnection connect(SocketFactory fact, String host, int port, int timeOut) throws ApiConnectionException {
         ApiConnectionImpl con = new ApiConnectionImpl();
-        con.open(host, port, secure, timeOut);
+        con.open(host, port, fact, timeOut);
         return con;
     }
 
     @Override
     public boolean isConnected() {
         return connected;
-    }
-
-    @Override
-    public void disconnect() throws ApiConnectionException {
-        close();
     }
 
     @Override
@@ -138,14 +131,11 @@ public final class ApiConnectionImpl extends ApiConnection {
     /**
      * Start the API. Connects to the Mikrotik
      */
-    private void open(String host, int port, boolean secure, int conTimeout) throws ApiConnectionException {
+    private void open(String host, int port, SocketFactory fact, int conTimeout) throws ApiConnectionException {
         try {
             InetAddress ia = InetAddress.getByName(host.trim());
-            if (secure) {
-                sock = openSSLSocket(ia, port, conTimeout);
-            } else {
-                sock = openClearSocket(ia, port, conTimeout);
-            }
+            sock = fact.createSocket();
+            sock.connect(new InetSocketAddress(ia, port), conTimeout);
             in = new DataInputStream(sock.getInputStream());
             out = new DataOutputStream(sock.getOutputStream());
             connected = true;
@@ -162,31 +152,6 @@ public final class ApiConnectionImpl extends ApiConnection {
             connected = false;
             throw new ApiConnectionException(String.format("Error connecting to %s:%d : %s", host, port, ex.getMessage()), ex);
         }
-    }
-
-    private Socket openClearSocket(InetAddress ia, int port, int timeOut) throws IOException {
-        Socket clear = new Socket();
-        SocketAddress addr = new InetSocketAddress(ia, port);
-        clear.connect(new InetSocketAddress(ia, port), timeOut);
-        return clear;
-    }
-
-    /**
-     * open and configure a SSL socket.
-     */
-    private Socket openSSLSocket(InetAddress ia, int port, int timeOut) throws IOException {
-        SSLSocket ssl = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
-        ssl.connect(new InetSocketAddress(ia, port), timeOut);
-        List<String> cs = new LinkedList<>();
-        // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
-        // caused by a "SSL peer shut down incorrectly" error
-        for (String s : ssl.getSupportedCipherSuites()) {
-            if (s.startsWith("TLS_DH_anon")) {
-                cs.add(s);
-            }
-        }
-        ssl.setEnabledCipherSuites(cs.toArray(new String[]{}));
-        return ssl;
     }
 
     private synchronized String nextTag() {

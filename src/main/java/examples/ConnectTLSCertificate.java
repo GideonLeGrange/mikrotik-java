@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package examples;
 
-import java.net.Socket;
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocket;
+import java.util.List;
+import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.MikrotikApiException;
@@ -28,27 +26,30 @@ import me.legrange.mikrotik.MikrotikApiException;
  *
  * @author gideon
  */
-public class ConnectTLS {
+public class ConnectTLSCertificate {
 
     public static void main(String... args) throws Exception {
-        ConnectTLS ex = new ConnectTLS();
+        ConnectTLSCertificate ex = new ConnectTLSCertificate();
         ex.connect();
         ex.test();
         ex.disconnect();
     }
 
     private void test() throws MikrotikApiException {
-        con.execute("/system/reboot");
+        List<Map<String, String>> results = con.execute("/interface/print");
+        for (Map<String, String> result : results) {
+            System.out.println(result);
+        }
     }
 
     protected void connect() throws Exception {
-        SSLSocketFactory fact = (SSLSocketFactory) SSLSocketFactory.getDefault();
-        SSLSocket sock = (SSLSocket) fact.createSocket();
+        con = ApiConnection.connect(SSLSocketFactory.getDefault(), Config.HOST, ApiConnection.DEFAULT_TLS_PORT, ApiConnection.DEFAULT_CONNECTION_TIMEOUT);
+        con.login(Config.USERNAME, Config.PASSWORD);
     }
 
     protected void disconnect() throws Exception {
-        con.disconnect();
+        con.close();
     }
-    
+
     private ApiConnection con;
 }

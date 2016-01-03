@@ -14,7 +14,7 @@ import me.legrange.mikrotik.ApiConnection;
     }
 
     protected void disconnect() throws Exception {
-        con.disconnect();
+        con.close();
     }
     
     protected ApiConnection con;

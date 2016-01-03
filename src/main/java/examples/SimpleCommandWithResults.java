@@ -19,7 +19,6 @@ public class SimpleCommandWithResults extends Example {
     }
 
     private void test() throws MikrotikApiException {
-        con.setTimeout(50);
         List<Map<String, String>> results =  con.execute("/interface/print");
         for (Map<String, String> result : results) {
             System.out.println(result);
