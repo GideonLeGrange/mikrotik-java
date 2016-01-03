@@ -33,6 +33,11 @@ import javax.net.ssl.SSLSocketFactory;
 public class AnonymousSocketFactory extends SocketFactory {
 
     @Override
+    public Socket createSocket() throws IOException {
+        return fixSocket((SSLSocket) SSLSocketFactory.getDefault().createSocket());
+    }
+    
+    @Override
     public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
         return fixSocket((SSLSocket) SSLSocketFactory.getDefault().createSocket(host, port));
     }
@@ -51,7 +56,7 @@ public class AnonymousSocketFactory extends SocketFactory {
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
         return fixSocket((SSLSocket) SSLSocketFactory.getDefault().createSocket(address, port, localAddress, localPort));
     }
-
+    
     private Socket fixSocket(SSLSocket ssl) {
         List<String> cs = new LinkedList<>();
         // not happy with this code. Without it, SSL throws a "Remote host closed connection during handshake" error
@@ -62,7 +67,7 @@ public class AnonymousSocketFactory extends SocketFactory {
             }
         }
         ssl.setEnabledCipherSuites(cs.toArray(new String[]{}));
-        return ssl;
+        return ssl; 
     }
 
     public static SocketFactory getDefault() {
