@@ -8,7 +8,7 @@ package examples;
 public class Config {
 
     public static final String HOST = "192.168.1.34";
-    public static final String USERNAME = "gideon";
-    public static final String PASSWORD = "minapp";
+    public static final String USERNAME = "admin";
+    public static final String PASSWORD = "";
 
 }
