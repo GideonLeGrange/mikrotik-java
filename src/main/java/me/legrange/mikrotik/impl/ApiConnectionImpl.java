@@ -14,7 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import me.legrange.mikrotik.ApiConnection;
@@ -88,6 +90,11 @@ public final class ApiConnectionImpl extends ApiConnection {
     @Override
     public void setTimeout(int timeout) throws MikrotikApiException {
         if (timeout > 0) {
+            try {
+                sock.setSoTimeout(timeout);
+            } catch (Exception e) {
+                throw new MikrotikApiException(e.getMessage(), e);
+            }
             this.timeout = timeout;
         } else {
             throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive", timeout));
@@ -452,16 +459,18 @@ public final class ApiConnectionImpl extends ApiConnection {
 
     private class SyncListener implements ResultListener {
 
+        CountDownLatch latch = new CountDownLatch(1);
+
         @Override
         public synchronized void error(MikrotikApiException ex) {
             this.err = ex;
-            notify();
+            latch.countDown();
         }
 
         @Override
         public synchronized void completed() {
             complete = true;
-            notify();
+            latch.countDown();
         }
 
         synchronized void completed(Done done) {
@@ -471,7 +480,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 results.add(res);
             }
             complete = true;
-            notify();
+            latch.countDown();
         }
 
         @Override
@@ -481,22 +490,10 @@ public final class ApiConnectionImpl extends ApiConnection {
 
         private List<Map<String, String>> getResults(int timeout) throws MikrotikApiException {
             try {
-                synchronized (this) { // don't wait if we already have a result.
-                    int waitTime = timeout;
-                    while (!complete && (waitTime > 0)) {
-                        long start = System.currentTimeMillis();
-                        wait(waitTime);
-                        waitTime = waitTime - (int) (System.currentTimeMillis() - start);
-                        if ((waitTime <= 0) && !complete) {
-                            err = new ApiConnectionException(String.format("Command timed out after %d ms", timeout));
-                        }
-                    }
-                }
-            } catch (InterruptedException ex) {
-                throw new ApiConnectionException(ex.getMessage(), ex);
-            }
-            if (err != null) {
-                throw new MikrotikApiException(err.getMessage(), err);
+                latch.await(timeout, TimeUnit.MILLISECONDS);
+            } catch (Exception ex) {
+                err = new ApiConnectionException(String.format("Command timed out after %d ms", timeout));
+                throw new MikrotikApiException(ex.getMessage(), err);
             }
             return results;
         }
