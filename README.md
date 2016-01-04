@@ -6,16 +6,21 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
-**The current stable version is 2.2**
+**The current stable version is 3.0**
 
 This library uses [semantic versioning](http://semver.org/)
 
-### Changes in version 2.2:
+### Changes in version 3.0:
 
-Version 2.2 implements AutoCloseable on ApiConnection to support Java 7's try-with-resources statement.
+Version 3.0 addresses the problems the API has around TLS encryption. To do this, the way secure connections are implemented is changed, to put the power to do this in the hands of the user. This means that:
+* The `connectTLS` API methods were removed. 
+* A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added. 
 
-#### Previous 2.x versions:
+Further changes include:
+* The deprecated `disconnect()` method is removed. 
 
+#### Version 2.x
+* 2.2 implemented AutoCloseable on ApiConnection to support Java 7's try-with-resources statement.
 * 2.1 added the ability to use connection and command timeouts as.
 
 * 2.0.3 Fixed bug #18 - An empty username in ```login()``` caused the API to hang.
