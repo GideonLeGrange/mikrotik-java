@@ -137,7 +137,7 @@ public abstract class ApiConnection implements AutoCloseable {
      * commands after a specific time.
      *
      * Note: This is not the same as the timeout value passed in the connect()
-     * and connectTLS() methods. This timeout is specific to synchronous
+     * methods. This timeout is specific to synchronous
      * commands, that timeout is applied to opening the API socket.
      *
      * @param timeout The time out in milliseconds.
