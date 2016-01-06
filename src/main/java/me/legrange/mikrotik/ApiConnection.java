@@ -33,8 +33,9 @@ public abstract class ApiConnection implements AutoCloseable {
     
     /**
      * Create a new API connection to the give device on the supplied port using 
-     * the supplied socket factory to create the socket. d
+     * the supplied socket factory to create the socket. 
      *
+     * @param fact SocketFactory to use for TCP socket creation.
      * @param host The host to which to connect.
      * @param port The TCP port to use.
      * @param timeout The connection timeout to use when opening the connection.
@@ -128,7 +129,7 @@ public abstract class ApiConnection implements AutoCloseable {
      *
      * @param tag The tag of the command to cancel
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a
-     * problem canceling the command
+     * problem cancelling the command
      */
     public abstract void cancel(String tag) throws MikrotikApiException;
 

@@ -40,7 +40,7 @@ I recommend using the Maven artifact from Maven Central using this dependency:
 <dependency>
   <groupId>me.legrange</groupId>
   <artifactId>mikrotik</artifactId>
-  <version>2.2</version>
+  <version>3.0</version>
 </dependency>
 ```
 You can also clone or fork the repository, or download the source as a zip or tar.gz from [Releases](https://github.com/GideonLeGrange/mikrotik-java/releases)
