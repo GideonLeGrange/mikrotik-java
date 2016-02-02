@@ -12,10 +12,11 @@ This library uses [semantic versioning](http://semver.org/)
 
 ### Changes in version 3.0:
 
-Version 3.0 addresses the problems the API has around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over creating TLS sockets. To this end:
+Version 3.0 addresses the problems the API had around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over creating TLS sockets. To this end:
 * A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
 * The `connectTLS()` API methods were removed. 
 * All the overloaded `connect()` methods were removed. 
+* Added a pre-built `jar` file to the dowloads.
 
 Further changes include:
 * The previously deprecated `disconnect()` method is removed. 
@@ -30,7 +31,7 @@ Version 1 is considered *obsolete* and will no longer be supported or patched.
 
 ## Getting the API
 
-I recommend using the Maven artifact from Maven Central using this dependency:
+Maven users can obtain the API using the artifact from Maven Central with this dependency:
 
 ```xml
 <dependency>
@@ -40,7 +41,7 @@ I recommend using the Maven artifact from Maven Central using this dependency:
 </dependency>
 ```
 
-Alternatively, you can download the pre-built jar file, or a zip or tar.gz file with the source for the latest release [here](https://github.com/GideonLeGrange/mikrotik-java/releases/latest)
+You can also download the pre-built jar file, or a zip or tar.gz file with the source for the latest release [here](https://github.com/GideonLeGrange/mikrotik-java/releases/latest)
 
 ## Contributing
 
@@ -60,7 +61,7 @@ con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
 
-The above example shows a convenient and easy way of creating an unencrypted connection using the default ports. Encrypting API traffic is however recommended, and to do this you need to open a TLS connection to the router. This is done by passing an instance of the `SocketFactory` you wish to use to construct the TLS socket to the API:
+The above example shows a convenient and easy way of creating an unencrypted connection using the default ports. This is useful for development and testing. For production environments, encrypting API traffic is however recommended. To do this you need to open a TLS connection to the router by passing an instance of the `SocketFactory` you wish to use to construct the TLS socket to the API:
 
 ```java
 ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), "10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, ApiConnection.DEFAULT_CONNECTION_TIMEOUT);
