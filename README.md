@@ -12,28 +12,21 @@ This library uses [semantic versioning](http://semver.org/)
 
 ### Changes in version 3.0:
 
-Version 3.0 addresses the problems the API has around TLS encryption. To do this, the way secure connections are implemented is changed so that the user has complete control over creating TLS sockets. To this end:
-* A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encrypyion.
-* The `connectTLS` API methods were removed. 
+Version 3.0 addresses the problems the API has around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over creating TLS sockets. To this end:
+* A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
+* The `connectTLS()` API methods were removed. 
+* All the overloaded `connect()` methods were removed. 
 
 Further changes include:
-* The deprecated `disconnect()` method is removed. 
+* The previously deprecated `disconnect()` method is removed. 
 
 #### Version 2.x
 
 Version 2.2 is the last version 2.x release and will be supported for a limited time. 
 
-* 2.2 implemented AutoCloseable on ApiConnection to support Java 7's try-with-resources statement.
-* 2.1 added the ability to use connection and command timeouts as.
-
-* 2.0.3 Fixed bug #18 - An empty username in ```login()``` caused the API to hang.
-* 2.0.2 Fixed bug #13 - processor thread wasn't being stopped on disconnect(), causing non-exit of application in some cases. 
-* 2.0.1 fixed parsing of !=, < and > operators in a where clause. 
-* 2.0.0 changed ResultListener to receive errors and completion notifications. This version is not backwards compatible with version 1.x. 
-
 #### Version 1.x
 
-Version 1 is considered *deprecated* and will no longer be supported or patched. 
+Version 1 is considered *obsolete* and will no longer be supported or patched. 
 
 ## Getting the API
 
@@ -202,7 +195,7 @@ con.setTimeout(5000); // set command timeout to 5 seconds
 con.login("admin","password"); // log in to router
 con.execute("/system/reboot"); // execute a command
 ``` 
-
+ 	
 It is important to note that command timeouts can be set before ```login()``` is called, and can therefore influence the behaviour of login. 
 
 The default command timeout, if none is set by the user, is 60 seconds. 
