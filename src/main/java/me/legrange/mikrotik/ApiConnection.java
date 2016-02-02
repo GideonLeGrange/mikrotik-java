@@ -49,34 +49,6 @@ public abstract class ApiConnection implements AutoCloseable {
     }
 
     /**
-     * Create a new API connection to the give device on the supplied port
-     *
-     * @param host The host to which to connect.
-     * @param port The TCP port to use.
-     * @param timeout The connection timeout to use when opening the connection.
-     * @return The ApiConnection
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a
-     * problem connecting
-     * @since 2.1
-     */
-    public static ApiConnection connect(String host, int port, int timeout) throws MikrotikApiException {
-        return connect(SocketFactory.getDefault(), host, port, timeout);
-    }
-
-    /**
-     * Create a new API connection to the give device on the supplied port
-     *
-     * @param host The host to which to connect.
-     * @param port The TCP port to use.
-     * @return The ApiConnection
-     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if there is a
-     * problem connecting
-     */
-    public static ApiConnection connect(String host, int port) throws MikrotikApiException {
-        return connect(host, port, DEFAULT_CONNECTION_TIMEOUT);
-    }
-
-    /**
      * Create a new API connection to the give device on the default API port.
      *
      * @param host The host to which to connect.
@@ -85,7 +57,7 @@ public abstract class ApiConnection implements AutoCloseable {
      * problem connecting
      */
     public static ApiConnection connect(String host) throws MikrotikApiException {
-        return connect(host, DEFAULT_PORT);
+        return connect(SocketFactory.getDefault(), host, DEFAULT_PORT, DEFAULT_COMMAND_TIMEOUT);
     }
 
     /**
