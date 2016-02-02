@@ -14,12 +14,15 @@ This library uses [semantic versioning](http://semver.org/)
 
 Version 3.0 addresses the problems the API has around TLS encryption. To do this, the way secure connections are implemented is changed, to put the power to do this in the hands of the user. This means that:
 * The `connectTLS` API methods were removed. 
-* A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added. 
+* A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encrypyion.
 
 Further changes include:
 * The deprecated `disconnect()` method is removed. 
 
 #### Version 2.x
+
+Version 2.2 is the last version 2.x release and will be supported for a limited time. 
+
 * 2.2 implemented AutoCloseable on ApiConnection to support Java 7's try-with-resources statement.
 * 2.1 added the ability to use connection and command timeouts as.
 
@@ -47,7 +50,8 @@ You can also clone or fork the repository, or download the source as a zip or ta
 
 ## Contributing
 
-I welcome contributions, be it bug fixes or other improvements. If you fix or change something, please submit a pull request. If you want to report a bug, please open an issue. 
+I welcome contributions, be it bug fixes or other improvements. If you fix or change something, please submit a pull request. If you want to report a bug, please open an issue. General questions 
+are also welcome.
 
 # Examples
 
@@ -62,17 +66,16 @@ con.login("admin","password"); // log in to router
 con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
-If your router does not use the default API port, the port can be specified when connecting: 
 
-```java 
-ApiConnection con = ApiConnection.connect("10.0.1.1", 1337); // connect to router on port 1337
-```
 
-To open an encrypted (TLS) connection is as simple, assuming the default API-SSL port is used:
+To encrypt API traffic (recommended) you need to open a TLS connection to the router. This is done by passing an instance of the `SocketFactory` you wish to use to construct the 
+TLS socket to the API:
 
 ```java
-ApiConnection con = ApiConnection.connectTLS("10.0.1.1"); // connect to router using TLS
+ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), Config.HOST, ApiConnection.DEFAULT_TLS_PORT, ApiConnection.DEFAULT_CONNECTION_TIMEOUT);
 ```
+
+Besides allowing the user to specify the socket factory, it also gives full control over the TCP Port and connection timeout. 
 
 ### Connection timeouts
 
