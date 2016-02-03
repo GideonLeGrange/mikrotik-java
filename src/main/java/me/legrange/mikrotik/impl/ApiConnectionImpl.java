@@ -51,7 +51,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     }
 
     @Override
-    public void login(String username, String password) throws MikrotikApiException, InterruptedException {
+    public void login(String username, String password) throws MikrotikApiException {
         if (username.trim().isEmpty()) {
             throw new ApiConnectionException("API username cannot be empty");
         }

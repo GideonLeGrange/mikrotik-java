@@ -72,17 +72,16 @@ public abstract class ApiConnection implements AutoCloseable {
      *
      * @param username - username of the user on the router
      * @param password - password for the user
-     * @throws me.legrange.mikrotik.MikrotikApiException
-     * @throws java.lang.InterruptedException
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if the API encounters an error on login.
      */
-    public abstract void login(String username, String password) throws MikrotikApiException, InterruptedException;
+    public abstract void login(String username, String password) throws MikrotikApiException;
 
     /**
      * execute a command and return a list of results.
      *
      * @param cmd Command to execute
      * @return The list of results
-     * @throws me.legrange.mikrotik.MikrotikApiException
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if the API encounters an error executing a command.
      */
     public abstract List<Map<String, String>> execute(String cmd) throws MikrotikApiException;
 
@@ -92,7 +91,7 @@ public abstract class ApiConnection implements AutoCloseable {
      * @param cmd Command to execute
      * @param lis ResultListener that will receive the results
      * @return A command object that can be used to cancel the command.
-     * @throws MikrotikApiException
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if the API encounters an error executing a command.
      */
     public abstract String execute(String cmd, ResultListener lis) throws MikrotikApiException;
 
