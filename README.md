@@ -68,7 +68,7 @@ For production environments, encrypting API traffic is recommended. To do this y
 
 ```java
 ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), "10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, ApiConnection.DEFAULT_CONNECTION_TIMEOUT);
-``
+```
 
 Above an instance of the default SSL socket factory is passed to the API. This will work as long as the router's certificate has been added to the local key store.  Besides allowing the user to specify the socket factory, the above method also gives full control over the TCP Port and connection timeout. 
 
@@ -81,7 +81,7 @@ By default, the API will generate an exception if it cannot connect to the speci
 
 ```java
    ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), "10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, 2000); // connect to router on the default API port and fail in 2 seconds
-```
+```	
 
 ### Constants
 Some constants are provided in `ApiConnection` to make it easier for users to construct connections with default ports and timeouts:
@@ -184,6 +184,11 @@ String tag = con.execute("/interface/wireless/monitor .id=wlan1 return signal-to
         }
   );
 ```
+
+The `ResultListener` interface has three methods the user needs to implement:
+* `receive()` is called to receive results produced by the router from the API. 
+* `error()` is called when an exception is raised based on a 'trap' received from the router or another (typically connection) problem.
+* `completed()` is called when the router has indicated that the command has completed or has been cancelled. 
 
 The above command will run and send results asynchronously as they become available, until it is canceled. The command (identified by the unique String returned) is canceled like this:
 
