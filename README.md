@@ -16,7 +16,7 @@ Version 3.0 addresses the problems the API had around TLS encryption. The way se
 * A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
 * The `connectTLS()` API methods were removed. 
 * All the overloaded `connect()` methods were removed. 
-* Added a pre-built `jar` file to the dowloads.
+* Added a pre-built `jar` file to the downloads.
 
 Further changes include:
 * The previously deprecated `disconnect()` method is removed. 
