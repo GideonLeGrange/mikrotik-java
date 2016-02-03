@@ -12,7 +12,7 @@ This library uses [semantic versioning](http://semver.org/)
 
 ### Changes in version 3.0:
 
-Version 3.0 addresses the problems the API had around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over creating TLS sockets. To this end:
+Version 3.0 addresses the problems the API had around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over the creation of TLS sockets. To this end:
 * A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
 * The `connectTLS()` API methods were removed. 
 * All the overloaded `connect()` methods were removed. 
@@ -31,7 +31,7 @@ Version 1 is considered *obsolete* and will no longer be supported or patched.
 
 ## Getting the API
 
-Maven users can obtain the API using the artifact from Maven Central with this dependency:
+Maven users can use the artifact from Maven Central with this dependency:
 
 ```xml
 <dependency>
@@ -49,7 +49,7 @@ I welcome contributions, be it bug fixes or other improvements. If you fix or ch
 
 # Examples
 
-These examples should illustrate how to use this library. Please note that I assume that the user is proficient in Java and understands the Mikrotik command line syntax.
+These examples should illustrate how to use this library. Please note that I assume that the user is proficient in Java and understands the Mikrotik command line syntax. 
 
 ## Opening a connection
 Here is a simple example: Connect to a router and reboot it. 
@@ -60,18 +60,24 @@ con.login("admin","password"); // log in to router
 con.execute("/system/reboot"); // execute a command
 con.disconnect(); // disconnect from router
 ```
+The above example shows a easy way of creating an unencrypted connection using the default API port and timeout, which is useful for development and testing.
 
-The above example shows a convenient and easy way of creating an unencrypted connection using the default ports. This is useful for development and testing. For production environments, encrypting API traffic is however recommended. To do this you need to open a TLS connection to the router by passing an instance of the `SocketFactory` you wish to use to construct the TLS socket to the API:
+### TLS encryption
+
+For production environments, encrypting API traffic is recommended. To do this you need to open a TLS connection to the router by passing an instance of the `SocketFactory` you wish to use to construct the TLS socket to the API:
 
 ```java
 ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), "10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, ApiConnection.DEFAULT_CONNECTION_TIMEOUT);
-```
+``
 
-In the above example, an instance of the default SSL socket factory is passed to the API. This will work as long as the router's certificate has been added to your local key store.  Besides allowing the user to specify the socket factory, the above method also gives full control over the TCP Port and connection timeout. 
+Above an instance of the default SSL socket factory is passed to the API. This will work as long as the router's certificate has been added to the local key store.  Besides allowing the user to specify the socket factory, the above method also gives full control over the TCP Port and connection timeout. 
+
+RouterOS also supports anonymous TLS. An example showing how to create a socket factory for anonymous TLS is `AnonymousSocketFactory` in the examples directory.
+
 
 ### Connection timeouts
 
-By default, the API will generate an exception if it cannot connect to the specified router. This can take place immediately (typically if the router returns a 'Connection refused' error), but can also take up to 60 seconds if the router host is firewalled or if there are other network problems. This 60 seconds is the 'default connection timeout' an can be overridded by passing the preferred timeout to the APi as last parameter in a ```connect()``` call. For example:
+By default, the API will generate an exception if it cannot connect to the specified router. This can take place immediately (typically if the OS returns a 'Connection refused' error), but can also take up to 60 seconds if the router host is firewalled or if there are other network problems. This 60 seconds is the 'default connection timeout' an can be overridded by passing the preferred timeout to the APi as last parameter in a ```connect()``` call. For example:
 
 ```java
    ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), "10.0.1.1", ApiConnection.DEFAULT_TLS_PORT, 2000); // connect to router on the default API port and fail in 2 seconds
@@ -79,6 +85,7 @@ By default, the API will generate an exception if it cannot connect to the speci
 
 ### Constants
 Some constants are provided in `ApiConnection` to make it easier for users to construct connections with default ports and timeouts:
+
 Constant | Use for | Value 
 ---------|---------|------
 DEFAULT_PORT | Default TCP `port` value for unencrypyted connections | 8728
