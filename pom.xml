@@ -9,7 +9,7 @@
 
     <groupId>me.legrange</groupId>
     <artifactId>mikrotik</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
     <packaging>jar</packaging>
 
     <name>Mikrotik API Java Client Library</name>
