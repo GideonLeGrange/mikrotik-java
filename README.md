@@ -15,7 +15,7 @@ This library uses [semantic versioning](http://semver.org/)
 Version 3.0 addresses the problems the API had around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over the creation of TLS sockets. To this end:
 * A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
 * The `connectTLS()` API methods were removed. 
-* All the overloaded `connect()` methods were removed. 
+* Most of the overloaded `connect()` methods were removed. 
 * Added a pre-built `jar` file to the downloads.
 
 Further changes include:
