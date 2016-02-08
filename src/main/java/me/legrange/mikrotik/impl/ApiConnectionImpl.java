@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.SocketFactory;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.ApiConnectionException;
@@ -199,18 +201,25 @@ public final class ApiConnectionImpl extends ApiConnection {
                 try {
                     String s = Util.decode(in);
                     if (s != null) {
-                        queue.put(s);
+                        put(s);
                     }
                 } catch (ApiDataException ex) {
-                    try {
-                        queue.put(ex);
-                    } catch (InterruptedException ex2) {
+                    put(ex);
+                } catch (ApiConnectionException ex) {
+                    if (connected || !sock.isClosed()) {
+                        put(ex);
                     }
-                } catch (ApiConnectionException | InterruptedException ex) {
-                    ex.printStackTrace();
                 }
             }
         }
+
+        private void put(Object data) {
+            try {
+                queue.put(data);
+            } catch (InterruptedException ex) {
+            }
+        }
+
         private final LinkedBlockingQueue queue = new LinkedBlockingQueue(40);
     }
 
