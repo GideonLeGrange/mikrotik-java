@@ -8,9 +8,9 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 **The current stable version is 3.0.1**
 
-### Changes in version 3.0:
-
 Version 3.0.1 fixes a harmless but annoying stack trace bug (#34).
+
+### Changes in version 3.0:
 
 Version 3.0 addresses the problems the API had around TLS encryption. The way secure connections are implemented is changed so that the user has complete control over the creation of TLS sockets. To this end:
 * A new method, `connect(SocketFactory fact, String host, int port, int timeout)`, was added to allow for better user control over sockets and especially encryption.
