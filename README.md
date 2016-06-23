@@ -47,9 +47,16 @@ You can also download the pre-built jar file, or a zip or tar.gz file with the s
 
 I welcome contributions, be it bug fixes or other improvements. If you fix or change something, please submit a pull request. If you want to report a bug, please open an issue. General questions are also welcome. 
 
-# Examples
+# Using the API
 
-These examples should illustrate how to use this library. Please note that I assume that the user is proficient in Java and understands the Mikrotik command line syntax. 
+How to use the API is best illustrated by examples. 
+
+These examples should illustrate how to use this library. Please note that I assume that the user is proficient in Java and understands the Mikrotik command line syntax. The command line syntax gives you an indication of what commands you can pass, but the RouterOS API used by this library does not support everyting. 
+
+Some things to consider when debugging your API calls are:
+* The RouterOS API does not support auto-completion. You need to write out command and parameter names. For example, you can't say `/ip/hotspot/user/add name=john add=10.0.0.1`, you need to write out `address`.
+* You need to quote values with spaces in. You can't say `name=Joe Blogs`, you need to use `name="Joe Blogs"`
+* Exceptions with a root cause of `ApiCommandException` are errors received from the remote RouterOS device and contain the error message received. 
 
 ## Opening a connection
 Here is a simple example: Connect to a router and reboot it. 
