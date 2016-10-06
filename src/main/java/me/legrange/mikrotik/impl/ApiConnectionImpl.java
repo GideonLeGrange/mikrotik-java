@@ -312,6 +312,14 @@ public final class ApiConnectionImpl extends ApiConnection {
                     if (parts.length == 3) {
                         if (!parts[2].endsWith("\r")) {
                             res.put(parts[1], unpackResult(parts[2]));
+                        } else {
+                            final StringBuilder sb = new StringBuilder();
+                            sb.append(parts[2]);
+                            while (!lines.isEmpty()) {
+                                nextLine();
+                                sb.append(line);
+                            }
+                            res.put(parts[1], sb.toString());
                         }
                     } else {
                         throw new ApiDataException(String.format("Malformed line '%s'", line));
