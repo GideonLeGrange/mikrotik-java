@@ -6,9 +6,10 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
-**The current stable version is 3.0.1**
+**The current stable version is 3.0.2**
 
-Version 3.0.1 fixes a harmless but annoying stack trace bug (#34).
+Version 3.0.2 fixes a bug that where file download and some other multi-line content results caused the API call to time out rather than return a result. This
+was reported in #43 and fixed by #37.
 
 ### Changes in version 3.0:
 
