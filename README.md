@@ -8,7 +8,7 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 **The current stable version is 3.0.3**
 
-Version 3.0.3 fixes a problem with the encoding of non-English characters when sending commands to RouterOS. See #40 for more details. 
+Version 3.0.3 fixes a problem with the encoding of non-English characters when sending commands to RouterOS. See [#40](https://github.com/GideonLeGrange/mikrotik-java/issues/40) for more details. 
 
 ### Changes in version 3.0:
 
