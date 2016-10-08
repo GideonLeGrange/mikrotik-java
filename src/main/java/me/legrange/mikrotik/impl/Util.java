@@ -133,7 +133,6 @@ final class Util {
      * stream.
      */
     private static void encode(String word, OutputStream out) throws UnsupportedEncodingException, IOException {
-//        byte bytes[] = word.getBytes("US-ASCII");
         byte bytes[] = word.getBytes("UTF-8");
         int len = bytes.length;
         if (len < 0x80) {

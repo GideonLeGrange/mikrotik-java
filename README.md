@@ -6,9 +6,9 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
-**The current stable version is 3.0.2**
+**The current stable version is 3.0.3**
 
-Version 3.0.2 fixes a bug where file download and some other multi-line content results causes the API call to time out, rather than return a result. This was reported in #43 and fixed by #37.
+Version 3.0.3 fixes a problem with the encoding of non-English characters when sending commands to RouterOS. See #40 for more details. 
 
 ### Changes in version 3.0:
 
@@ -37,7 +37,7 @@ Maven users can use the artifact from Maven Central with this dependency:
 <dependency>
   <groupId>me.legrange</groupId>
   <artifactId>mikrotik</artifactId>
-  <version>3.0.2</version>
+  <version>3.0.3</version>
 </dependency>
 ```
 
