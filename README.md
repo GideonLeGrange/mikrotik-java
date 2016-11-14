@@ -81,7 +81,6 @@ Above an instance of the default SSL socket factory is passed to the API. This w
 
 RouterOS also supports anonymous TLS. An example showing how to create a socket factory for anonymous TLS is `AnonymousSocketFactory` in the examples directory.
 
-
 ### Connection timeouts
 
 By default, the API will generate an exception if it cannot connect to the specified router. This can take place immediately (typically if the OS returns a 'Connection refused' error), but can also take up to 60 seconds if the router host is firewalled or if there are other network problems. This 60 seconds is the 'default connection timeout' an can be overridded by passing the preferred timeout to the APi as last parameter in a ```connect()``` call. For example:
@@ -99,6 +98,16 @@ DEFAULT_PORT | Default TCP `port` value for unencrypyted connections | 8728
 DEFAULT_TLS_PORT | Default TCP `port` value for encrypyted connections | 8729
 DEFAULT_CONNECTION_TIMEOUT | Default connection `timeout` value (ms) | 60000
 
+### Try with resources 
+
+The API can also be used in a "try with resources" statement which will ensure that the connection is close
+
+```java
+        try (ApiConnection con = ApiConnection.connect(SocketFactory.getDefault(), Config.HOST, ApiConnection.DEFAULT_PORT, 2000)) {
+            con.login(Config.USERNAME, Config.PASSWORD);
+            con.execute("/user/add name=eric");
+        }
+```
 
 In following examples the connection, login and disconnection code will not be repeated. In all cases it is assumed that an `ApiConnection` has been established, `login()` has been called, and that the connection is called `con`.
 
