@@ -65,7 +65,7 @@ Here is a simple example: Connect to a router and reboot it.
 ApiConnection con = ApiConnection.connect("10.0.1.1"); // connect to router
 con.login("admin","password"); // log in to router
 con.execute("/system/reboot"); // execute a command
-con.disconnect(); // disconnect from router
+con.close(); // disconnect from router
 ```
 The above example shows a easy way of creating an unencrypted connection using the default API port and timeout, which is useful for development and testing.
 
