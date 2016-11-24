@@ -100,7 +100,7 @@ DEFAULT_CONNECTION_TIMEOUT | Default connection `timeout` value (ms) | 60000
 
 ### Try with resources 
 
-The API can also be used in a "try with resources" statement which will ensure that the connection is close
+The API can also be used in a "try with resources" statement which will ensure that the connection is closed:
 
 ```java
         try (ApiConnection con = ApiConnection.connect(SocketFactory.getDefault(), Config.HOST, ApiConnection.DEFAULT_PORT, 2000)) {
