@@ -33,7 +33,6 @@ public final class ApiConnectionImpl extends ApiConnection {
      *
      * @param host The host to which to connect.
      * @param port The TCP port to use.
-     * @param secure Is TLS required
      * @param timeOut The connection timeout
      * @return The ApiConnection
      * @throws me.legrange.mikrotik.ApiConnectionException Thrown if there is a
@@ -174,6 +173,10 @@ public final class ApiConnectionImpl extends ApiConnection {
      */
     private class Reader extends Thread {
 
+        private Reader() {
+            super("Mikrotik API Reader");
+        }
+        
         private String take() throws ApiConnectionException, ApiDataException {
             Object val = null;
             try {
@@ -192,7 +195,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         private boolean isEmpty() {
             return queue.isEmpty();
         }
-
+        
         @Override
         public void run() {
             while (connected) {
@@ -226,6 +229,10 @@ public final class ApiConnectionImpl extends ApiConnection {
      */
     private class Processor extends Thread {
 
+        private Processor() {
+            super("Mikrotik API Result Processor");
+        }
+ 
         @Override
         public void run() {
             while (connected) {
