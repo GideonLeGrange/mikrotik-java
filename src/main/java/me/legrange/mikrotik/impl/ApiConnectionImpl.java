@@ -66,6 +66,11 @@ public final class ApiConnectionImpl extends ApiConnection {
     public List<Map<String, String>> execute(String cmd) throws MikrotikApiException {
         return execute(Parser.parse(cmd), timeout);
     }
+    
+    @Override
+    public List<Map<String, String>> execute(String cmd, int timeout) throws MikrotikApiException {
+        return execute(Parser.parse(cmd), timeout);
+    }
 
     @Override
     public String execute(String cmd, ResultListener lis) throws MikrotikApiException {
