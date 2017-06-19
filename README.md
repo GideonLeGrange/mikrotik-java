@@ -167,6 +167,19 @@ Change the IP address in the object created by the above example:
 con.execute("/interface/gre/set .id=gre1 remote-address=10.0.1.1"); 
 ```
 
+### Un-setting a variable on an object 
+
+Un-setting a variable is a bit different, and you need to use a parameter called `value-name`. This isn't well documented. Let's say you have a firewall rule that was set up like this:
+
+```java
+con.execute("/ip/firewall/filter/add action=accept chain=forward time=00:00:01-01,mon")
+```
+Assuming the rule can be accessed as `.id=*1`, you un-set it by using `value-name` as seen below:
+
+```java 
+con.execute("/ip/firewall/filter/unset .id=*1 value-name=time");
+```
+
 ### Remove an existing object
 
 And now remove the object:
