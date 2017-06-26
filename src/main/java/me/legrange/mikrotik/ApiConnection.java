@@ -84,6 +84,16 @@ public abstract class ApiConnection implements AutoCloseable {
      * @throws me.legrange.mikrotik.MikrotikApiException Thrown if the API encounters an error executing a command.
      */
     public abstract List<Map<String, String>> execute(String cmd) throws MikrotikApiException;
+    
+     /**
+     * execute a command and return a list of results.
+     *
+     * @param cmd Command to execute
+     * @param timeout The connection timeout to use when executing the command.
+     * @return The list of results
+     * @throws me.legrange.mikrotik.MikrotikApiException Thrown if the API encounters an error executing a command.
+     */
+    public abstract List<Map<String, String>> execute(String cmd, int timeout) throws MikrotikApiException;
 
     /**
      * execute a command and attach a result listener to receive it's results.
