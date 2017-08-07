@@ -1,4 +1,4 @@
-# mikrotik-java
+# mikrotik-java 
 
 A Java client library implementation for the Mikrotik RouterOS API. 
 
@@ -6,9 +6,11 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
-**The current stable version is 3.0.3**
+[![Build Status](https://travis-ci.org/GideonLeGrange/mikrotik-java.svg?branch=master)](https://travis-ci.org/GideonLeGrange/mikrotik-java)
 
-Version 3.0.3 fixes a problem with the encoding of non-English characters when sending commands to RouterOS. See [#40](https://github.com/GideonLeGrange/mikrotik-java/issues/40) for more details. 
+**The current stable version is 3.0.4**
+
+Version 3.0.4 captures several months worth of small code clean-ups and documentation improvements.
 
 ### Changes in version 3.0:
 
@@ -21,13 +23,9 @@ Version 3.0 addresses the problems the API had around TLS encryption. The way se
 Further changes include:
 * The previously deprecated `disconnect()` method is removed. 
 
-#### Version 2.x
+#### Versions 1.x and 2.x
 
-Version 2.2 is the last version 2.x release and will be supported for a limited time. 
-
-#### Version 1.x
-
-Version 1 is considered *obsolete* and will no longer be supported or patched. 
+Versions 1 and 2 are considered *obsolete* and will no longer be supported or patched. 
 
 ## Getting the API
 
@@ -37,7 +35,7 @@ Maven users can use the artifact from Maven Central with this dependency:
 <dependency>
   <groupId>me.legrange</groupId>
   <artifactId>mikrotik</artifactId>
-  <version>3.0.3</version>
+  <version>3.0.4</version>
 </dependency>
 ```
 
