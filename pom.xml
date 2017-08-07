@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>  
   <groupId>me.legrange</groupId>  
   <artifactId>mikrotik</artifactId>  
-  <version>3.0.3</version>  
+  <version>3.0.4</version>  
   <packaging>jar</packaging>  
   <name>Mikrotik API Java Client Library</name>  
   <url>https://github.com/GideonLeGrange/mikrotik-java</url>  
@@ -164,10 +164,5 @@
       <version>3.8.1</version>  
       <scope>test</scope> 
     </dependency>  
-    <dependency> 
-      <groupId>org.jetbrains.kotlin</groupId>  
-      <artifactId>kotlin-stdlib</artifactId>  
-      <version>1.0.4</version> 
-    </dependency> 
   </dependencies> 
 </project>
