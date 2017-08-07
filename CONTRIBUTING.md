@@ -11,7 +11,7 @@ There are several ways of contributing to this small open source library:
 If you experience a problem using the mikrotik-java library, the best way to get in touch with me is to either send me an
 email or open an issue on GitHub. While you can seek help on StackOverflow or the Mikrotik Forums (both of which I've seen 
 people do), I do not read those sites often. If you wish to log your question there (it makes sense for it to be searchable or 
-in a place where other interested people can dind it) and want me to take a look at it, please send me an email pointing to 
+in a place where other interested people can find it) and want me to take a look at it, please send me an email pointing to 
 the question. 
 
 I find that it is very easy to help users of this library if they include the following things which are usually quite relevant:
