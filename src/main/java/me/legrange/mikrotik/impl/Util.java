@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -71,7 +72,7 @@ final class Util {
                     }
                     buf[i] = (byte) (c & 0xFF);
                 }
-                String res = new String(buf);
+                String res = new String(buf, Charset.forName("UTF-8"));
                 if (result.length() > 0) {
                     result.append("\n");
                 }
@@ -121,11 +122,11 @@ final class Util {
      * @return - converted string.
      */
     static String hexStrToStr(String s) {
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         for (int i = 0; i < s.length(); i += 2) {
-            ret += (char) Integer.parseInt(s.substring(i, i + 2), 16);
+            ret.append((char) Integer.parseInt(s.substring(i, i + 2), 16));
         }
-        return ret;
+        return ret.toString();
     }
 
     /**
