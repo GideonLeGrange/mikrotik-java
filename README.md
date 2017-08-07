@@ -43,9 +43,11 @@ Maven users can use the artifact from Maven Central with this dependency:
 
 You can also download the pre-built jar file, or a zip or tar.gz file with the source for the latest release [here](https://github.com/GideonLeGrange/mikrotik-java/releases/latest)
 
-## Contributing
+## Asking for help or contributing
 
-I welcome contributions, be it bug fixes or other improvements. If you fix or change something, please submit a pull request. If you want to report a bug, please open an issue. General questions are also welcome. 
+I welcome contributions, be it bug fixes or other improvements. 
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contribute to this project.
 
 # Using the API
 
