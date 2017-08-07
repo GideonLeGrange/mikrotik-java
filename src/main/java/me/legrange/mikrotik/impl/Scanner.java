@@ -15,6 +15,7 @@
  */
 package me.legrange.mikrotik.impl;
 
+import java.util.Locale;
 import static me.legrange.mikrotik.impl.Scanner.Token.*;
 /**
  * A simple scanner.
@@ -117,7 +118,7 @@ class Scanner {
             text.append(c);
             nextChar();
         }
-        String val = text.toString().toLowerCase();
+        String val = text.toString().toLowerCase(Locale.getDefault());
         switch (val) {
             case "where":
                 return WHERE;
@@ -181,17 +182,6 @@ class Scanner {
             pos++;
         } else {
             c = '\n';
-        }
-    }
-
-    /**
-     * look ahead one character
-     */
-    private char peek() {
-        if (pos < line.length()) {
-            return line.charAt(pos);
-        } else {
-            return '\n';
         }
     }
 

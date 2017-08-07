@@ -175,7 +175,7 @@ class Parser {
             }
             next();
         }
-        cmd.addProperty(props.toArray(new String[]{}));
+        cmd.addProperty(props.toArray(new String[props.size()]));
     }
 
     private void expect(Token...tokens) throws ParseException {
