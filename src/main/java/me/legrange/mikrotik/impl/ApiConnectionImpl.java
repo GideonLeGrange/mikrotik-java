@@ -31,6 +31,7 @@ public final class ApiConnectionImpl extends ApiConnection {
     /**
      * Create a new API connection to the give device on the supplied port
      *
+     * @param fact The socket factory used to construct the connection socket.
      * @param host The host to which to connect.
      * @param port The TCP port to use.
      * @param timeOut The connection timeout
@@ -176,7 +177,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         private Reader() {
             super("Mikrotik API Reader");
         }
-        
+
         private String take() throws ApiConnectionException, ApiDataException {
             Object val = null;
             try {
@@ -195,15 +196,13 @@ public final class ApiConnectionImpl extends ApiConnection {
         private boolean isEmpty() {
             return queue.isEmpty();
         }
-        
+
         @Override
         public void run() {
             while (connected) {
                 try {
                     String s = Util.decode(in);
-                    if (s != null) {
-                        put(s);
-                    }
+                    put(s);
                 } catch (ApiDataException ex) {
                     put(ex);
                 } catch (ApiConnectionException ex) {
@@ -232,7 +231,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         private Processor() {
             super("Mikrotik API Result Processor");
         }
- 
+
         @Override
         public void run() {
             while (connected) {
@@ -420,35 +419,22 @@ public final class ApiConnectionImpl extends ApiConnection {
             return err;
         }
 
-        private void queue(Response res) {
-            String tag = res.getTag();
-            if (tag != null) {
-                ResultListener rl = listeners.get(tag);
-                if (rl != null) {
-                    if (res instanceof Result) {
-                        rl.receive((Result) res);
-                    } else {
-                        //          rl.error((Error)res);
-                    }
-                }
-            }
-        }
         private final List<String> lines = new LinkedList<>();
         private String line;
     }
 
-    private class SyncListener implements ResultListener {
+    private static class SyncListener implements ResultListener {
 
         @Override
         public synchronized void error(MikrotikApiException ex) {
             this.err = ex;
-            notify();
+            notifyAll();
         }
 
         @Override
         public synchronized void completed() {
             complete = true;
-            notify();
+            notifyAll();
         }
 
         synchronized void completed(Done done) {
@@ -458,7 +444,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 results.add(res);
             }
             complete = true;
-            notify();
+            notifyAll();
         }
 
         @Override
