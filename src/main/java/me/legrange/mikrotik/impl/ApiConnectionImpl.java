@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -82,6 +83,13 @@ public final class ApiConnectionImpl extends ApiConnection {
     public void setTimeout(int timeout) throws MikrotikApiException {
         if (timeout > 0) {
             this.timeout = timeout;
+            if (sock != null) {
+                try {
+                    sock.setSoTimeout(timeout);
+                } catch (SocketException ex) {
+                    throw new MikrotikApiException(String.format("Error setting socket timeout: %s", ex.getMessage()), ex);
+                }
+            }
         } else {
             throw new MikrotikApiException(String.format("Invalid timeout value '%d'; must be postive", timeout));
         }
@@ -136,6 +144,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             InetAddress ia = InetAddress.getByName(host.trim());
             sock = fact.createSocket();
             sock.connect(new InetSocketAddress(ia, port), conTimeout);
+            sock.setSoTimeout(timeout);
             in = new DataInputStream(sock.getInputStream());
             out = new DataOutputStream(sock.getOutputStream());
             connected = true;
