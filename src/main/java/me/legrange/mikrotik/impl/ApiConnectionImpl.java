@@ -216,8 +216,9 @@ public final class ApiConnectionImpl extends ApiConnection {
                     put(ex);
                 } catch (ApiConnectionException ex) {
                     if (connected || !sock.isClosed()) {
-                        put(ex);
+                        connected = false;
                     }
+                    put(ex);
                 }
             }
         }
