@@ -55,12 +55,14 @@ public final class ApiConnectionImpl extends ApiConnection {
         if (username.trim().isEmpty()) {
             throw new ApiConnectionException("API username cannot be empty");
         }
-        List<Map<String, String>> list = execute("/login");
+        List<Map<String, String>> list = execute("/login name=" + username + " password=" + password);
         Map<String, String> res = list.get(0);
-        String hash = res.get("ret");
-        String chal = Util.hexStrToStr("00") + new String(password.toCharArray()) + Util.hexStrToStr(hash);
-        chal = Util.hashMD5(chal);
-        execute("/login name=" + username + " response=00" + chal);
+        if (res.containsKey("ret")) {
+            String hash = res.get("ret");
+            String chal = Util.hexStrToStr("00") + new String(password.toCharArray()) + Util.hexStrToStr(hash);
+            chal = Util.hashMD5(chal);
+            execute("/login name=" + username + " response=00" + chal);
+        }
     }
 
     @Override
