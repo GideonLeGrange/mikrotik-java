@@ -8,9 +8,10 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 [![Build Status](https://travis-ci.org/GideonLeGrange/mikrotik-java.svg?branch=master)](https://travis-ci.org/GideonLeGrange/mikrotik-java)
 
-**The current stable version is 3.0.4**
+**The current stable version is 3.0.5**
 
-Version 3.0.4 captures several months worth of small code clean-ups and documentation improvements.
+Version 3.0.5 implements a change in the way `login()` is implemented by RouterOS from version 6.43 onward. See pull request #60 for details.
+
 
 ### Changes in version 3.0:
 
