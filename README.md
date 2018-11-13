@@ -226,8 +226,6 @@ The above command will run and send results asynchronously as they become availa
 con.cancel(tag);
 ```
 
-From version 2.0.0 of the API the error() and completed() methods are part of the ResultListener interface. 
-
 ## Command timeouts
 
 Command timeouts can be used to make sure that synchronous commands either return or fail within a specific time. Command timeouts are separate from the connection timeout used in ```connect()```, and can be set using ```setTimeout()```. Here is an example:
