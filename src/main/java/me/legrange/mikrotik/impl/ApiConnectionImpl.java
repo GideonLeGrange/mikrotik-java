@@ -55,7 +55,10 @@ public final class ApiConnectionImpl extends ApiConnection {
         if (username.trim().isEmpty()) {
             throw new ApiConnectionException("API username cannot be empty");
         }
-        List<Map<String, String>> list = execute("/login name=" + username + " password=" + password);
+        Command cmd = new Command("/login");
+        cmd.addParameter("name", username);
+        cmd.addParameter("password", password);
+        List<Map<String, String>> list = execute(cmd, timeout);
         if (!list.isEmpty()) {
             Map<String, String> res = list.get(0);
             if (res.containsKey("ret")) {
