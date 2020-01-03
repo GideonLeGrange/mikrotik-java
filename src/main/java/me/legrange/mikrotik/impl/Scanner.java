@@ -28,6 +28,7 @@ class Scanner {
 
         SLASH("/"), COMMA(","), EOL(), WS, TEXT,
         LESS("<"), MORE(">"), EQUALS("="), NOT_EQUALS("!="), PIPE("!"),
+        LEFT_BRACKET("("), RIGHT_BRACKET(")"),
         WHERE, NOT, AND, OR, RETURN;
 
         @Override
@@ -80,6 +81,12 @@ class Scanner {
             case '=':
                 nextChar();
                 return EQUALS;
+            case '(' :
+                nextChar();
+                return LEFT_BRACKET;
+            case ')' :
+                nextChar();
+                return RIGHT_BRACKET;
             case '!':
                 return pipe();
             case '"':

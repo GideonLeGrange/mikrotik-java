@@ -79,7 +79,7 @@ class Parser {
     }
 
     private void expr() throws ParseException {
-        expect(Token.NOT, Token.TEXT);
+        expect(Token.NOT, Token.TEXT, Token.LEFT_BRACKET);
         switch (token) {
             case NOT:
                 notExpr();
@@ -106,6 +106,13 @@ class Parser {
                 }
             }
             break;
+            case LEFT_BRACKET : {
+                next();
+                expr();
+                expect(Token.RIGHT_BRACKET);
+                next();
+            }
+            break;
         }
         // if you get here, you had a expression, see if you want more. 
         switch (token) {
@@ -122,7 +129,7 @@ class Parser {
         cmd.addQuery("?#&");
     }
     
-      private void orExpr() throws ParseException {
+      private void  orExpr() throws ParseException {
         next(); // eat or
         expr();
         cmd.addQuery("?#|");
