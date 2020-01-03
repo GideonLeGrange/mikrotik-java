@@ -1,12 +1,13 @@
 command  = action [ query ] [ return ]
 action   = ("/" word)+
 query    = "where" expr
-expr     = expr "and" expr | expr "or" expr | "not" expr | hasExpr | eqExpr | lessExpr | moreExpr | notExpr
+expr     = expr "and" expr | expr "or" expr | "not" expr | hasExpr | eqExpr | lessExpr | moreExpr | notExpr | nestedExpr
 hasExpr  = name
 eqExpr   = name "=" value
 lessExpr = name "<" value
 moreExpr = name ">" value
 notExpr  = name "!=" value
+nestedExpr = "(" expr ")" 
 return   = "return" (name)+
 
 
