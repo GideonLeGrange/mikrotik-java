@@ -3,24 +3,30 @@ package me.legrange.mikrotik.impl;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import me.legrange.mikrotik.impl.Scanner.Token;
 
 /**
- * Parse the pseudo-command line into command objects. 
+ * Parse the pseudo-command line into command objects.
+ *
  * @author GideonLeGrange
  */
 class Parser {
 
-    /** parse the given bit of text into a Command object */
+    /**
+     * parse the given bit of text into a Command object
+     */
     static Command parse(String text) throws ParseException {
         Parser parser = new Parser(text);
         return parser.parse();
     }
 
-    /** run parse on the internal data and return the command object */
+    /**
+     * run parse on the internal data and return the command object
+     */
     private Command parse() throws ParseException {
         command();
-        while (!is(Token.WHERE, Token.RETURN, Token.EOL)) { 
+        while (!is(Token.WHERE, Token.RETURN, Token.EOL)) {
             param();
         }
         if (token == Token.WHERE) {
@@ -32,7 +38,7 @@ class Parser {
         expect(Token.EOL);
         return cmd;
     }
-    
+
     private void command() throws ParseException {
         StringBuilder path = new StringBuilder();
         do {
@@ -67,8 +73,7 @@ class Parser {
                 next();
             }
             cmd.addParameter(new Parameter(name, val.toString()));
-        }
-        else {
+        } else {
             cmd.addParameter(new Parameter(name));
         }
     }
@@ -92,7 +97,7 @@ class Parser {
                     case EQUALS:
                         eqExpr(name);
                         break;
-                    case NOT_EQUALS :
+                    case NOT_EQUALS:
                         notExpr(name);
                         break;
                     case LESS:
@@ -106,30 +111,36 @@ class Parser {
                 }
             }
             break;
-            case LEFT_BRACKET : {
-                next();
-                expr();
-                expect(Token.RIGHT_BRACKET);
-                next();
-            }
-            break;
+            case LEFT_BRACKET:
+                nestedExpr();
+                break;
         }
         // if you get here, you had a expression, see if you want more. 
         switch (token) {
-            case AND : andExpr();
+            case AND:
+                andExpr();
                 break;
-            case OR : orExpr();
+            case OR:
+                orExpr();
                 break;
         }
     }
-    
+
+    private void nestedExpr() throws ParseException {
+        expect(Token.LEFT_BRACKET);
+        next();
+        expr();
+        expect(Token.RIGHT_BRACKET);
+        next();
+    }
+
     private void andExpr() throws ParseException {
         next(); // eat and
         expr();
         cmd.addQuery("?#&");
     }
-    
-      private void  orExpr() throws ParseException {
+
+    private void orExpr() throws ParseException {
         next(); // eat or
         expr();
         cmd.addQuery("?#|");
@@ -142,7 +153,7 @@ class Parser {
         cmd.addQuery("?#!");
     }
 
-    private void eqExpr(String name) throws  ParseException {
+    private void eqExpr(String name) throws ParseException {
         next(); // eat = 
         expect(Token.TEXT);
         cmd.addQuery(String.format("?%s=%s", name, text));
@@ -161,7 +172,7 @@ class Parser {
         cmd.addQuery("?#!");
         next();
     }
-    
+
     private void moreExpr(String name) throws ScanException {
         next(); // eat >
         cmd.addQuery(String.format("?>%s=%s", name, text));
@@ -185,19 +196,21 @@ class Parser {
         cmd.addProperty(props.toArray(new String[props.size()]));
     }
 
-    private void expect(Token...tokens) throws ParseException {
-        if (!is(tokens)) 
+    private void expect(Token... tokens) throws ParseException {
+        if (!is(tokens))
             throw new ParseException(String.format("Expected %s but found %s at position %d", Arrays.asList(tokens), this.token, scanner.pos()));
     }
-    
-    private boolean is(Token...tokens) {
+
+    private boolean is(Token... tokens) {
         for (Token want : tokens) {
             if (this.token == want) return true;
         }
         return false;
     }
 
-    /** move to the next token returned by the scanner */
+    /**
+     * move to the next token returned by the scanner
+     */
     private void next() throws ScanException {
         token = scanner.next();
         while (token == Token.WS) {
@@ -211,7 +224,7 @@ class Parser {
         scanner = new Scanner(line);
         next();
     }
-    
+
     private final Scanner scanner;
     private Token token;
     private String text;
