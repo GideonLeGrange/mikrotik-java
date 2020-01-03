@@ -248,7 +248,7 @@ public final class ApiConnectionImpl extends ApiConnection {
                 } catch (ApiCommandException ex) {
                     String tag = ex.getTag();
                     if (tag != null) {
-                        res = new Error(tag, ex.getMessage());
+                        res = new Error(tag, ex.getMessage(), ex.getCategory());
                     } else {
                         continue;
                     }
@@ -414,6 +414,9 @@ public final class ApiConnectionImpl extends ApiConnection {
                         }
                     } else if (line.startsWith("=message=")) {
                         err.setMessage(line.split("=", 3)[2]);
+                    }
+                    else if (line.startsWith("=category=")) {
+                        err.setCategory(Integer.parseInt(line.split("=", 3)[2]));
                     }
                     if (hasNextLine()) {
                         nextLine();
