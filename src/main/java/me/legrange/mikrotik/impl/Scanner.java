@@ -121,7 +121,7 @@ class Scanner {
      */
     private Token name() throws ScanException {
         text = new StringBuilder();
-        while (!in(c, "[ \t\r\n=<>!]")) {
+        while (!in(c, "[ \t\r\n=<>!)]")) {
             text.append(c);
             nextChar();
         }
