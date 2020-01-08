@@ -8,9 +8,9 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 [![Build Status](https://travis-ci.org/GideonLeGrange/mikrotik-java.svg?branch=master)](https://travis-ci.org/GideonLeGrange/mikrotik-java)
 
-**The current stable version is 3.0.6**
+**The current stable version is 3.0.7**
 
-Version 3.0.6 releases a bug fix to `login()`. See pull request #67 for details.
+Version 3.0.7 fixes nested expressions when constructing complex queries using `and` and `or` expressions. See [#72](https://github.com/GideonLeGrange/mikrotik-java/issues/72) for more information
 
 ### Changes in version 3.0:
 
@@ -35,7 +35,7 @@ Maven users can use the artifact from Maven Central with this dependency:
 <dependency>
   <groupId>me.legrange</groupId>
   <artifactId>mikrotik</artifactId>
-  <version>3.0.6</version>
+  <version>3.0.7</version>
 </dependency>
 ```
 
