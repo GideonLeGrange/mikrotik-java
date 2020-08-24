@@ -6,7 +6,7 @@ This project provides a Java client to manipulate Mikrotik routers using the rem
 
 ## Versions
 
-[![Build Status](https://travis-ci.org/GideonLeGrange/mikrotik-java.svg?branch=master)](https://travis-ci.org/GideonLeGrange/mikrotik-java)
+![Java CI with Maven](https://github.com/GideonLeGrange/mikrotik-java/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 **The current stable version is 3.0.7**
 
