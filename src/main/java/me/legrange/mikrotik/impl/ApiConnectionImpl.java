@@ -306,6 +306,7 @@ public final class ApiConnectionImpl extends ApiConnection {
             switch (line) {
                 case "!re":
                     return unpackRe();
+                case "!empty":
                 case "!done":
                     return unpackDone();
                 case "!trap":
