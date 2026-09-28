@@ -439,6 +439,7 @@ public final class ApiConnectionImpl extends ApiConnection {
         @Override
         public synchronized void error(MikrotikApiException ex) {
             this.err = ex;
+            this.complete = true;
             notifyAll();
         }
 
